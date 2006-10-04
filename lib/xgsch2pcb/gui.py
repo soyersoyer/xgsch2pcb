@@ -88,7 +88,7 @@ class MonitorWindow(gtk.Window):
         column = gtk.TreeViewColumn(None, gtk.CellRendererText(), text=0)
         self.pagelist.append_column(column)
         selection = self.pagelist.get_selection()
-        selection.set_mode(gtk.SELECTION_SINGLE)
+        selection.set_mode(gtk.SELECTION_MULTIPLE)
         selection.connect('changed',
                           self.event_pagelist_selection_changed)
         self.pagelist.set_headers_visible(False)
@@ -267,8 +267,7 @@ class MonitorWindow(gtk.Window):
         self.set_pcbsensitivities()
 
     def event_pagelist_selection_changed(self, selection):
-        (model, iter) = selection.get_selected()
-        page_selected = (iter != None)
+        page_selected = selection.count_selected_rows()
         self.removepagebutton.set_sensitive(page_selected)
         self.editpagebutton.set_sensitive(page_selected)
         self.attribpagebutton.set_sensitive(page_selected)
@@ -343,30 +342,40 @@ class MonitorWindow(gtk.Window):
 
 
     def event_removepage_button_clicked(self, button):
-        (model, iter) = self.pagelist.get_selection().get_selected()
-        if iter == None:
-            return
-        page = model.get_value(iter, 0)
-        self.project.remove_page(page)
+        # Because we're modifying the treeview at the same time as
+        # reading from it, we need to make a list of
+        # gtk.TreeRowReferences (which are persistent over
+        # modification of a treemodel) and then iterate over that.
+        (model, paths) = self.pagelist.get_selection().get_selected_rows()
+        refs = map(gtk.TreeRowReference, [model]*len(paths), paths)
+        for ref in refs:
+            page = model.get_value(model.get_iter(ref.get_path()), 0)
+            self.project.remove_page(page)
+
 
     def event_schematic_button_clicked(self, button, tool):
-        (model, iter) = self.pagelist.get_selection().get_selected()
-        page = model.get_value(iter, 0)
+        
+        def runtool_func(model, path, iter):
+            page = model.get_value(iter, 0)
 
-        toolpath = find_tool_path(tool)
-        if toolpath == None:
-            md = gtk.MessageDialog(self,
-                                   (gtk.DIALOG_MODAL |
-                                    gtk.DIALOG_DESTROY_WITH_PARENT),
-                                   gtk.MESSAGE_ERROR,
-                                   gtk.BUTTONS_OK,
-                                   _('Could not locate tool: %s') % tool)
-            md.show_all()
-            md.run()
-            md.hide_all()
-            return
+            toolpath = find_tool_path(tool)
+            if toolpath == None:
+                md = gtk.MessageDialog(self,
+                                       (gtk.DIALOG_MODAL |
+                                        gtk.DIALOG_DESTROY_WITH_PARENT),
+                                       gtk.MESSAGE_ERROR,
+                                       gtk.BUTTONS_OK,
+                                       _('Could not locate tool: %s') % tool)
+                md.show_all()
+                md.run()
+                md.hide_all()
+                return
 
-        Popen([toolpath, page])
+            Popen([toolpath, page])
+
+        # Call the private helper function defined above for each
+        # selected schematic page.
+        self.pagelist.get_selection().selected_foreach(runtool_func)
 
     def event_editpcb_button_clicked(self, button):
         
