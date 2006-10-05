@@ -29,7 +29,7 @@ AM_INIT_AUTOMAKE([foreign dist-bzip2 dist-zip ])
 
 
 PYTHON_WANTVERSION=2.4
-PYTHON_WANTMODULES="commands gettext os os.path re shutil stat subprocess"
+PYTHON_WANTMODULES="commands gettext os os.path re shutil stat subprocess dbus dbus.glib dbus.service"
 GTK_WANTVERSION=2.8
 
 
