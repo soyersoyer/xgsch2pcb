@@ -119,12 +119,20 @@ class PCBManager( gobject.GObject ):
 
             pcb_obj = self.session_bus.get_object(pcb, '/org/seul/geda/pcb')
             pcb_iface = dbus.Interface(pcb_obj, 'org.seul.geda.pcb')
-            filename = pcb_iface.GetFilename()
-            print 'is_layout_open(): DEBUG: Filename is ' + filename
 
-            if filename == os.path.abspath( self.output_name ) + ".pcb":
-                found_our_file = True
-                continue
+            ohdear = False            
+            try:
+                filename = pcb_iface.GetFilename()
+            except:
+                print 'is_layout_open(): DEBUG Exception calling pcb_iface.GetFilename()'
+                ohdear = True
+
+            if not ohdear:
+                print 'is_layout_open(): DEBUG: Filename is ' + filename
+    
+                if filename == os.path.abspath( self.output_name ) + ".pcb":
+                    found_our_file = True
+                    continue
         
         if not found_our_file: 
             return False
