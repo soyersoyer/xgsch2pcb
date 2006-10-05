@@ -89,10 +89,10 @@ diff -U3 -p -r1.31 gui-top-window.c
  }
 Index: src/hid/gtk/dbus.c
 ===================================================================
-diff -U3 -p -r -N /home/pcjc2/empty/dbus.c src/hid/gtk/dbus.c
+diff -U3 -p -N /home/pcjc2/empty/dbus.c src/hid/gtk/dbus.c
 --- /home/pcjc2/empty/dbus.c	1970-01-01 01:00:00.000000000 +0100
-+++ src/hid/gtk/dbus.c	2006-10-04 19:59:11.000000000 +0100
-@@ -0,0 +1,158 @@
++++ src/hid/gtk/dbus.c	2006-10-05 23:05:41.000000000 +0100
+@@ -0,0 +1,166 @@
 +/*
 + * PCB, an interactive printed circuit board editor
 + * D-Bus IPC logic
@@ -117,10 +117,15 @@ diff -U3 -p -r -N /home/pcjc2/empty/dbus.c src/hid/gtk/dbus.c
 + *  D-Bus code derrived from example-service.c in the dbus-glib bindings
 + */
 +
++// For canonicalize_file_name
++#define _GNU_SOURCE
++#include <stdlib.h>
++
 +#include "dbus.h"
 +#include "data.h"
 +
 +#include <dbus/dbus-glib.h>
++
 +
 +typedef struct GhidDbus GhidDbus;
 +typedef struct GhidDbusClass GhidDbusClass;
@@ -164,10 +169,13 @@ diff -U3 -p -r -N /home/pcjc2/empty/dbus.c src/hid/gtk/dbus.c
 +gboolean
 +ghid_dbus_get_filename (GhidDbus *obj, char **ret, GError **error)
 +{
++  char *filename;
 +#ifdef DEBUGDBUS
 +  printf ("ghid_dbus_get_filename()\n");
 +#endif
-+  (*ret) = g_strdup ( PCB->Filename );
++  filename = canonicalize_file_name( PCB->Filename );
++  (*ret) = g_strdup ( filename );
++  free( filename );
 +
 +  return TRUE;
 +}
