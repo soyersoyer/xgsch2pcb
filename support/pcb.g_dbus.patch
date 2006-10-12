@@ -34,7 +34,7 @@ diff -U3 -p -r1.62 configure.ac
 +	Please review the following errors:
 +	$DBUS_PKG_ERRORS])]
 +		)
-+		DBUS_GLIB_VERSION=`$PKG_CONFIG dbus-glib-1 --modversion`
++		DBUS_VERSION=`$PKG_CONFIG dbus-1 --modversion`
 +		PKG_CHECK_MODULES(DBUS_GLIB, dbus-glib-1 >= 0.20, , 
 +			[AC_MSG_ERROR([Cannot find dbus-glib-1 >= 0.20, install it and rerun ./configure
 +	Please review the following errors:
