@@ -1,0 +1,118 @@
+Index: configure.ac
+===================================================================
+RCS file: /cvsroot/pcb/pcb/configure.ac,v
+retrieving revision 1.67
+diff -U3 -p -r1.67 configure.ac
+--- configure.ac	18 Oct 2006 05:59:57 -0000	1.67
++++ configure.ac	1 Dec 2006 00:04:52 -0000
+@@ -187,6 +187,38 @@ then
+     HIDLIST=
+ fi
+ 
++AC_MSG_CHECKING([for whether to use DBUS])
++AC_ARG_WITH([dbus],
++[  --with-dbus             Specify if DBUS IPC is to be included],
++[],[])
++AC_MSG_RESULT([$with_dbus])
++AM_CONDITIONAL(WITH_DBUS, test x$with_dbus = xyes)
++
++if test "x$with_dbus" = "xyes"; then
++	case " $with_gui " in
++		*\ gtk\ *) ;;
++		*\ lesstif\ *) ;;
++		* ) AC_MSG_ERROR([DBUS selected, but only works with a mainloop capable GUI HID])
++	esac
++	
++	# Check for pkg-config
++	AC_PATH_PROG(PKG_CONFIG, pkg-config, no)
++	if test "$PKG_CONFIG" = "no"; then
++		AC_MSG_ERROR([Cannot find pkg-config, make sure it is installed and in your PATH])
++	fi
++
++	PKG_CHECK_MODULES(DBUS, dbus-1 >= 0.61, , 
++		[AC_MSG_ERROR([Cannot find dbus-1 >= 0.61, install it and rerun ./configure
++Please review the following errors:
++$DBUS_PKG_ERRORS])]
++	)
++	DBUS_VERSION=`$PKG_CONFIG dbus-1 --modversion`
++	
++	AC_DEFINE([HAVE_DBUS], 1,
++		[Define to 1 if DBUS IPC is to be compiled in])
++
++fi
++
+ AC_MSG_CHECKING([for which printer to use])
+ AC_ARG_WITH([printer],
+ [  --with-printer= 	  Specify the printer: lpr [[default=lpr]]],
+@@ -505,8 +537,8 @@ fi
+ AC_MSG_RESULT([no])
+ ])
+ 
+-CFLAGS="$CFLAGS $X_CFLAGS $GTK_CFLAGS"
+-LIBS="$LIBS $XM_LIBS $X_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS"
++CFLAGS="$CFLAGS $X_CFLAGS $DBUS_CFLAGS $GTK_CFLAGS"
++LIBS="$LIBS $XM_LIBS $DBUS_LIBS $X_LIBS $GTK_LIBS $DMALLOC_LIBS $GD_LIBS"
+ 
+ 
+ # if we have gcc then add -Wall
+Index: src/Makefile.am
+===================================================================
+RCS file: /cvsroot/pcb/pcb/src/Makefile.am,v
+retrieving revision 1.30
+diff -U3 -p -r1.30 Makefile.am
+--- src/Makefile.am	9 Oct 2006 00:35:25 -0000	1.30
++++ src/Makefile.am	1 Dec 2006 00:04:52 -0000
+@@ -138,6 +138,11 @@ PCB_SRCS = \
+ 	hid/hidint.h 
+ pcb_bin_SOURCES = ${PCB_SRCS} core_lists.h
+ 
++EXTRA_pcb_bin_SOURCES = \
++	dbus-pcbmain.c \
++	dbus.h \
++	dbus.c
++
+ BUILT_SOURCES = \
+ 	core_lists.h \
+ 	hid/gtk/gtk_lists.h \
+@@ -177,7 +182,8 @@ EXTRA_DIST= \
+ 	$(srcdir)/hid/ps/hid.conf \
+ 	Pcb.ad.in  \
+ 	pcb-menu.res \
+-	pcbtest.sh.in
++	pcbtest.sh.in \
++	dbus.xml
+ 
+ AM_YFLAGS=	-d
+ 
+@@ -223,6 +229,21 @@ hid/gtk/gtk_lists.h : ${LIBGTK_SRCS} Mak
+ 	(for f in ${LIBGTK_SRCS} ; do cat $(srcdir)/$$f ; done) | grep "^REGISTER" > $@.tmp
+ 	mv $@.tmp $@
+ 
++# If we are building with dbus support, we need some extra files
++if WITH_DBUS
++dbus-introspect.h : dbus.xml Makefile
++	echo '/* AUTOMATICALLY GENERATED FROM dbus.xml DO NOT EDIT */' > $@.tmp
++	echo "static char *pcb_dbus_introspect_xml ="  > $@.tmp
++	sed 's/\\/\\\\/g; s/"/\\"/g; s/^/"/; s/$$/"/' < dbus.xml >> $@.tmp
++	echo ";" >> $@.tmp
++	mv $@.tmp $@
++	
++
++PCB_SRCS+=	dbus-pcbmain.c dbus.c dbus.h
++BUILT_SOURCES+=	dbus-introspect.h
++
++endif
++
+ # If we are building on win32, then compile in some icons for the
+ # desktop and application toolbar
+ if WIN32
+@@ -314,7 +335,8 @@ DISTCLEANFILES= pcbtest.sh Pcb .test/Pcb
+ 	hid/lesstif/lesstif_lists.h \
+ 	hid/png/png_lists.h \
+ 	hid/ps/ps_lists.h \
+-	core_lists.h
++	core_lists.h \
++	dbus-introspect.h
+ 
+ 
+ # create wrapper script that lets you test pcb prior to installation
