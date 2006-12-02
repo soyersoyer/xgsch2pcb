@@ -1,0 +1,167 @@
+Index: gtk/gui-top-window.c
+===================================================================
+RCS file: /cvsroot/pcb/pcb/src/hid/gtk/gui-top-window.c,v
+retrieving revision 1.34
+diff -U3 -p -r1.34 gui-top-window.c
+--- gtk/gui-top-window.c	19 Oct 2006 22:42:56 -0000	1.34
++++ gtk/gui-top-window.c	2 Dec 2006 13:54:14 -0000
+@@ -84,6 +84,9 @@
+ #include <dmalloc.h>
+ #endif
+ 
++// TODO: Does the GTK HID ASSUME X11?
++#include <gdk/gdkx.h> // For gdk_x11_window_set_user_time ()
++
+ RCSID ("$Id$");
+ 
+ extern HID ghid_hid;
+@@ -3861,8 +3864,65 @@ LayersChanged (int argc, char **argv, in
+   return 0;
+ }
+ 
++static const char window_set_wm_time_syntax[] =
++"WindowSetWMTime ( timestamp )";
++
++static const char window_set_wm_time_help[] =
++"Sets the _WM_USER_TIME property on the main window. The timestamp should "
++"be a valid X11 Timestamp representing the last user interaction with the "
++"app. This action allows a project manager (or other app) to forward this "
++"Timestamp when requesting PCB raise above its own window.";
++
++/* %start-doc actions WindowSetWMTime
++
++This action is used to set the _WM_USER_TIME property to allow raising
++of the window with some window managers.
++
++%end-doc */
++
++static int
++WindowSetWMTime (int argc, char **argv, int x, int y)
++{
++  long timestamp_long;
++
++  if (argc != 1)
++  {
++    fprintf( stderr, "Need one argument" );
++    return 0;
++  }
++  timestamp_long = atol( argv[0] );
++
++  gdk_x11_window_set_user_time( GTK_WIDGET (gport->top_window)->window,
++                                 timestamp_long );
++  return 0;
++}
++
++
++static const char window_raise_syntax[] =
++"WindowRaise ( )";
++
++static const char window_raise_help[] =
++"Raises the main window.";
++
++/* %start-doc actions WindowRaise
++
++This action is used to raise PCB's main window
++
++%end-doc */
++
++static int
++WindowRaise (int argc, char **argv, int x, int y)
++{
++  gdk_window_raise(GTK_WIDGET (gport->top_window)->window );
++  return 0;
++}
++
+ HID_Action gtk_topwindow_action_list[] = {
+-  {"LayersChanged", 0, LayersChanged}
++  {"LayersChanged", 0, LayersChanged},
++  {"WindowSetWMTime", 0, WindowSetWMTime,
++   window_set_wm_time_help, window_set_wm_time_syntax},
++  {"WindowRaise", 0, WindowRaise,
++   window_raise_help, window_raise_syntax}
+ };
+ 
+ REGISTER_ACTIONS (gtk_topwindow_action_list)
+Index: lesstif/main.c
+===================================================================
+RCS file: /cvsroot/pcb/pcb/src/hid/lesstif/main.c,v
+retrieving revision 1.38
+diff -U3 -p -r1.38 main.c
+--- lesstif/main.c	10 Oct 2006 10:49:58 -0000	1.38
++++ lesstif/main.c	2 Dec 2006 13:54:15 -0000
+@@ -812,6 +814,62 @@ Benchmark (int argc, char **argv, int x,
+   return 0;
+ }
+ 
++static const char window_set_wm_time_syntax[] =
++"WindowSetWMTime ( timestamp )";
++
++static const char window_set_wm_time_help[] =
++"Sets the _WM_USER_TIME property on the main window. The timestamp should "
++"be a valid X11 Timestamp representing the last user interaction with the "
++"app. This action allows a project manager (or other app) to forward this "
++"Timestamp when requesting PCB raise above its own window.";
++
++/* %start-doc actions WindowSetWMTime
++
++This action is used to set the _WM_USER_TIME property to allow raising
++of the window with some window managers.
++
++%end-doc */
++
++static int
++WindowSetWMTime (int argc, char **argv, int x, int y)
++{
++  long timestamp_long;
++
++  if (argc != 1)
++  {
++    fprintf( stderr, "Need one argument" );
++    return 0;
++  }
++  timestamp_long = atol( argv[0] );
++
++  XChangeProperty (display, XtWindow( appwidget ),
++                   XInternAtom( display, "_NET_WM_USER_TIME", 0),
++                   XA_CARDINAL, 32, PropModeReplace,
++                   (unsigned char *)&timestamp_long, 1);
++
++  return 0;
++}
++
++
++static const char window_raise_syntax[] =
++"WindowRaise ( )";
++
++static const char window_raise_help[] =
++"Raises the main window.";
++
++/* %start-doc actions WindowRaise
++
++This action is used to raise PCB's main window
++
++%end-doc */
++
++static int
++WindowRaise (int argc, char **argv, int x, int y)
++{
++  XRaiseWindow( display, XtWindow( appwidget ));
++  return 0;
++}
++
+ HID_Action lesstif_main_action_list[] = {
+   {"PCBChanged", 0, PCBChanged,
+    pcbchanged_help, pcbchanged_syntax},
+@@ -830,7 +888,11 @@ HID_Action lesstif_main_action_list[] = 
+   {"Command", 0, Command,
+    command_help, command_syntax},
+   {"Benchmark", 0, Benchmark,
+-   benchmark_help, benchmark_syntax}
++   benchmark_help, benchmark_syntax},
++  {"WindowSetWMTime", 0, WindowSetWMTime,
++   window_set_wm_time_help, window_set_wm_time_syntax},
++  {"WindowRaise", 0, WindowRaise,
++   window_raise_help, window_raise_syntax}
+ };
+ 
+ REGISTER_ACTIONS (lesstif_main_action_list)
