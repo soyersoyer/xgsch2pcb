@@ -81,14 +81,6 @@ class PCBManager( gobject.GObject ):
         
         self.empty_char_array = dbus.Array( '', signature="s" )
 
-
-    def __del__(self):       
-        if self.pcb_stdin:
-            self.pcb_stdin.close()
-
-        if self.pcb_stdout:
-            self.pcb_stdout.close()
-
     def close_layout(self):
         # TODO: Fixme
         self.pcb_actions_iface.ExecAction( "Quit", self.empty_char_array )
