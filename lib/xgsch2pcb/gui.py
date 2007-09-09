@@ -93,42 +93,41 @@ class MonitorWindow(gtk.Window):
                           self.event_pagelist_selection_changed)
         self.pagelist.set_headers_visible(False)
         
-        # Horizontal button box containing 'add page' and 'remove page'
-        # buttons
-        addremovebox = gtk.HButtonBox()
-        addremovebox.set_layout(gtk.BUTTONBOX_SPREAD)
+        # Horizontal box containing 'add page' and 'remove page' buttons
+        addremovebox = gtk.HBox()
+        addremovebox.set_homogeneous(True)
         vbox.pack_start(addremovebox, False, True)
 
         self.addpagebutton = gtk.Button(stock=gtk.STOCK_ADD)
-        addremovebox.pack_start(self.addpagebutton)
+        addremovebox.pack_start(self.addpagebutton, True, True)
         self.addpagebutton.connect("clicked",
                        self.event_addpage_button_clicked)
         
         self.removepagebutton = gtk.Button(stock=gtk.STOCK_REMOVE)
         self.removepagebutton.connect("clicked",
                                       self.event_removepage_button_clicked)
-        addremovebox.pack_start(self.removepagebutton)
+        addremovebox.pack_start(self.removepagebutton, True, True)
         
         # Buttons to run gschem/gattrib
         self.editpagebutton = gtk.Button(_("Edit schematic"))
         vbox.pack_start(self.editpagebutton, False, True)
 
         # TODO: Is this wanted? The padding seems wrong
-        #image = gtk.Image()
-        #image.set_from_stock(gtk.STOCK_EDIT,gtk.ICON_SIZE_BUTTON)
-        #self.editpagebutton.set_image(image)
+        image = gtk.Image()
+        image.set_from_stock(gtk.STOCK_EDIT,gtk.ICON_SIZE_BUTTON)
+        self.editpagebutton.set_image(image)
 
         self.editpagebutton.connect("clicked",
                        self.event_schematic_button_clicked,
                        "gschem")
-        
+
         self.attribpagebutton = gtk.Button(_("Edit attributes"))
         vbox.pack_start(self.attribpagebutton, False, True)
-        
+
         # TODO: Is this wanted? The padding seems wrong
-        #image = gtk.Image()
-        #image.set_from_stock(gtk.STOCK_EDIT,gtk.ICON_SIZE_BUTTON)
-        #self.attribpagebutton.set_image(image)
+        image = gtk.Image()
+        image.set_from_stock(gtk.STOCK_EDIT,gtk.ICON_SIZE_BUTTON)
+        self.attribpagebutton.set_image(image)
 
         self.attribpagebutton.connect("clicked",
                        self.event_schematic_button_clicked,
