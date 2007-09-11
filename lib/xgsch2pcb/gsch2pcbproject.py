@@ -68,10 +68,10 @@ class Gsch2PCBProject(gobject.GObject):
 
         fp = open(fromfile, 'rb')
         for line in fp:
-            parts = line.strip().split()
+            parts = line.strip().split(None, 1)
             opt = parts[0]
             if opt == 'schematics':
-                self.pages = parts[1:]
+                self.pages = parts[1].split()
             elif opt == 'output-name':
                 self.output_name = parts[1]
             else:

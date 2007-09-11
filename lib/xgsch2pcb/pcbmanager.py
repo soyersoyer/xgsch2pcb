@@ -231,7 +231,7 @@ class PCBManager( gobject.GObject ):
         
         # Run gsch2pcb
         # TODO: Handle via Popen like other tools?
-        gsch2pcb_cmd = self.gsch2pcbpath + " -q " + self.output_name + ".tmp.gsch2pcb"
+        gsch2pcb_cmd = self.gsch2pcbpath + ' -q "' + self.output_name + '.tmp.gsch2pcb"'
         gsch2pcb_output = commands.getstatusoutput(gsch2pcb_cmd)
         lines = gsch2pcb_output[1].splitlines()
         for line in lines:
