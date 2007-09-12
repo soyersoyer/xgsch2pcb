@@ -333,7 +333,34 @@ class MonitorWindow(gtk.Window):
 
             if not os.path.exists(filename):
                 # Create a new zero-length file in place
-                open(filename, 'w').close()
+                try:
+                    open(filename, 'w').close()
+                except IOError, (errno, strerror):
+                    md = gtk.MessageDialog(self,
+                                           (gtk.DIALOG_MODAL |
+                                            gtk.DIALOG_DESTROY_WITH_PARENT),
+                                           gtk.MESSAGE_ERROR,
+                                           gtk.BUTTONS_OK )
+
+                    md.set_markup( _('<span weight="bold" size="larger">Could not create schematic</span>\n\nError %i: %s') % (errno, strerror) )
+                    md.show_all()
+                    md.run()
+                    md.hide_all()
+                    continue
+                except:
+                    #TODO: Provide a GUI Dialog for this
+                    md = gtk.MessageDialog(self,
+                                           (gtk.DIALOG_MODAL |
+                                            gtk.DIALOG_DESTROY_WITH_PARENT),
+                                           gtk.MESSAGE_ERROR,
+                                           gtk.BUTTONS_OK )
+
+                    md.set_markup( _('<span weight="bold" size="larger">Could not create schematic</span>') )
+                    md.show_all()
+                    md.run()
+                    md.hide_all()
+                    continue
+
             self.project.add_page(filename)
             break
 
@@ -445,13 +472,40 @@ class MonitorWindow(gtk.Window):
         if r != gtk.RESPONSE_OK:
             return
 
-        path = d.get_filename()
-        if not path.endswith('.gsch2pcb'):
-            path += '.gsch2pcb'
+        filename = d.get_filename()
+        if not filename.endswith('.gsch2pcb'):
+            filename += '.gsch2pcb'
 
-       	self.set_project(path)
-        self.project.save()
+        # Create a new zero-length file
+        try:
+            open(filename, 'w').close()
+        except IOError, (errno, strerror):
+            md = gtk.MessageDialog(self,
+                                   (gtk.DIALOG_MODAL |
+                                    gtk.DIALOG_DESTROY_WITH_PARENT),
+                                   gtk.MESSAGE_ERROR,
+                                   gtk.BUTTONS_OK )
 
+            md.set_markup( _('<span weight="bold" size="larger">Could not create project</span>\n\nError %i: %s') % (errno, strerror) )
+            md.show_all()
+            md.run()
+            md.hide_all()
+            return
+        except:
+            #TODO: Provide a GUI Dialog for this
+            md = gtk.MessageDialog(self,
+                                   (gtk.DIALOG_MODAL |
+                                    gtk.DIALOG_DESTROY_WITH_PARENT),
+                                   gtk.MESSAGE_ERROR,
+                                   gtk.BUTTONS_OK )
+
+            md.set_markup( _('<span weight="bold" size="larger">Could not create project</span>') )
+            md.show_all()
+            md.run()
+            md.hide_all()
+            return
+
+        self.set_project(filename)
 
     def event_open_button_clicked( self, button ):
        
