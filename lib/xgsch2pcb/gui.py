@@ -382,28 +382,30 @@ class MonitorWindow(gtk.Window):
 
     def event_schematic_button_clicked(self, button, tool):
         
-        def runtool_func(model, path, iter):
-            page = model.get_value(iter, 0)
+        # Call a private helper function defined above for each
+        # selected schematic page in order to build a list of pages.
+        pages = []
+        def buildpagelist_func(model, path, iter):
+            pages.append(model.get_value(iter, 0))
+        self.pagelist.get_selection().selected_foreach(buildpagelist_func)
 
-            toolpath = find_tool_path(tool)
-            if toolpath == None:
-                md = gtk.MessageDialog(self,
-                                       (gtk.DIALOG_MODAL |
-                                        gtk.DIALOG_DESTROY_WITH_PARENT),
-                                       gtk.MESSAGE_ERROR,
-                                       gtk.BUTTONS_OK,
-                                       _('Could not locate tool: %s') % tool)
-                md.show_all()
-                md.run()
-                md.hide_all()
-                return
-
-            Popen([toolpath, page])
-
-        # Call the private helper function defined above for each
-        # selected schematic page.
-        self.pagelist.get_selection().selected_foreach(runtool_func)
-
+        # Launch the requested tool
+        # FIXME does this work for gattrib?
+        toolpath = find_tool_path(tool)
+        if toolpath == None:
+            md = gtk.MessageDialog(self,
+                                   (gtk.DIALOG_MODAL |
+                                    gtk.DIALOG_DESTROY_WITH_PARENT),
+                                   gtk.MESSAGE_ERROR,
+                                   gtk.BUTTONS_OK,
+                                   _('Could not locate tool: %s') % tool)
+            md.show_all()
+            md.run()
+            md.hide_all()
+            return
+        
+        Popen([toolpath] + pages)
+            
     def event_editpcb_button_clicked(self, button):
         
         # Check if the layout might need updating
