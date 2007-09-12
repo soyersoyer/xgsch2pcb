@@ -27,6 +27,7 @@ t = gettext.translation('xgsch2pcb', fallback=True)
 _ = t.ugettext
 
 # xgsch2pcb-specific modules
+import config
 from funcs import *
 from gsch2pcbproject import Gsch2PCBProject
 from pcbmanager import PCBManager
@@ -174,7 +175,7 @@ class MonitorWindow(gtk.Window):
         # ------------
         self.aboutdialog = gtk.AboutDialog()
         self.aboutdialog.set_name(_("xgsch2pcb - a GUI for gsch2pcb"))
-        self.aboutdialog.set_version("1.0")
+        self.aboutdialog.set_version(config.VERSION)
         self.aboutdialog.set_copyright("University of Cambridge 2006")
         self.aboutdialog.set_authors(['Peter Brett', 'Peter Clifton'])
         gtk.about_dialog_set_url_hook(about_url_cb, None)
