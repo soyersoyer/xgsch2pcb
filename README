@@ -31,11 +31,26 @@ Requirements
 
  * A recent version of the gEDA suite
 
- * A specially patched version of ``pcb``
+ * A version of ``pcb`` compiled with D-Bus support.
+
+Building ``xgsch2pcb`` from source code requires:
+
+ * autoconf 2.59 (or later)
+
+ * automake
 
 
 Installation
 ------------
+
+If you have fetched the sources from the git repository you will need to
+create the necessary autoconf files. To do this, change into the source
+directory and execute the command:
+
+autoreconf
+
+This generates a ./configure script amongst other things, which you can run
+to configure the software.
 
 As long as you have all the dependencies installed:
 
