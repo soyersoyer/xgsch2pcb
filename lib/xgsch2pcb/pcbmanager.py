@@ -101,13 +101,13 @@ class PCBManager( gobject.GObject ):
         try:
             pcb_instances = self.dbus_iface.ListQueuedOwners('org.seul.geda.pcb')
         except:
-            print "is_layout_open(): DEBUG: Couldn't find any PCB instances"
+            #print "is_layout_open(): DEBUG: Couldn't find any PCB instances"
             return False
         
         found_our_file = False
         
         for pcb in pcb_instances:
-            print 'is_layout_open(): DEBUG: Found PCB instance at unique name ' + pcb
+            #print 'is_layout_open(): DEBUG: Found PCB instance at unique name ' + pcb
 
             pcb_obj = self.session_bus.get_object(pcb, '/org/seul/geda/pcb')
             pcb_iface = dbus.Interface(pcb_obj, 'org.seul.geda.pcb')
@@ -120,7 +120,7 @@ class PCBManager( gobject.GObject ):
                 ohdear = True
 
             if not ohdear:
-                print 'is_layout_open(): DEBUG: Filename is ' + filename
+                #print 'is_layout_open(): DEBUG: Filename is ' + filename
     
                 if filename == os.path.abspath( self.output_name ) + ".pcb":
                     found_our_file = True
