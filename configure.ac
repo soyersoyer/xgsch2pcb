@@ -22,7 +22,7 @@
 
 
 AC_PREREQ(2.59)
-AC_INIT([xgsch2pcb], [1.1], BUG-REPORT-ADDRESS)
+AC_INIT([geda-xgsch2pcb], [0.1.1], BUG-REPORT-ADDRESS)
 AC_CONFIG_AUX_DIR([tools])
 
 AM_INIT_AUTOMAKE([foreign dist-bzip2 dist-zip ])
