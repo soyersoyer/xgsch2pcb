@@ -644,7 +644,9 @@ class MonitorWindow(gtk.Window):
             if dirname:
                 os.chdir(dirname)
 
-            self.project = Gsch2PCBProject(filename)
+            basename = os.path.basename(filename)
+
+            self.project = Gsch2PCBProject(basename)
             self.project.connect('dirty-flag-changed',
                                  self.event_project_dirty_changed)
             self.project.connect('page-added',
