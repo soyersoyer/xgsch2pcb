@@ -174,7 +174,8 @@ class MonitorWindow(gtk.Window):
         # About dialog
         # ------------
         self.aboutdialog = gtk.AboutDialog()
-        self.aboutdialog.set_name(_("xgsch2pcb - a GUI for gsch2pcb"))
+        self.aboutdialog.set_name(_("xgsch2pcb"))
+        self.aboutdialog.set_comments(_("a GUI for gsch2pcb"))
         self.aboutdialog.set_version(config.VERSION)
         self.aboutdialog.set_copyright("University of Cambridge 2006")
         self.aboutdialog.set_authors(['Peter Brett', 'Peter Clifton'])
