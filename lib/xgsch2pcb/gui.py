@@ -159,10 +159,12 @@ class MonitorWindow(gtk.Window):
         self.updatepcbbutton.connect("clicked",
                        self.event_updatepcb_button_clicked)
 
+        """
         self.changepcbbutton = gtk.Button(_("Change layout file"))
         vbox.pack_start(self.changepcbbutton, False, False)
         self.changepcbbutton.connect("clicked",
                        self.event_changepcb_button_clicked)
+        """
 
 
         def about_url_cb(dialog, link, user_data):
@@ -438,6 +440,7 @@ class MonitorWindow(gtk.Window):
         self.update_layout()
     
     # TODO: Implement me
+    """
     def event_changepcb_button_clicked(self, button):
 
         d = gtk.MessageDialog(self,
@@ -449,7 +452,7 @@ class MonitorWindow(gtk.Window):
         d.show_all()
         d.run()
         d.hide_all()
-
+    """
 
 
     def event_new_button_clicked( self, button ):
@@ -624,7 +627,7 @@ class MonitorWindow(gtk.Window):
         self.pcbentry.set_sensitive( managers )
         self.editpcbbutton.set_sensitive( managers and (not pcbrunning) )
         self.updatepcbbutton.set_sensitive( managers and pages_available )
-        self.changepcbbutton.set_sensitive( managers )
+        #self.changepcbbutton.set_sensitive( managers )
 
 
     def handle_quit (self):
