@@ -52,7 +52,7 @@ class Gsch2PCBProject(gobject.GObject):
         else:
             self.output_name = None
 
-        if os.path.exists(self.filename):
+        if self.filename and os.path.exists(self.filename):
             self.load()
 
     def set_dirty(self, flag=True):

@@ -51,7 +51,20 @@ AC_DEFUN([AC_PYTHON_MODULE],[
     fi
 ])
 
-    
+
+##########################################################################
+# Command line flags start
+#
+
+# Change default location for rc files
+AC_ARG_WITH(templatesdir, [  --with-templatesdir=path       Change where the template projects are found], [templatesdir=$withval],[templatesdir=$datarootdir/$PACKAGE/templates])
+
+AC_SUBST(templatesdir)
+
+#
+# Command line flags end
+##########################################################################
+
 ##########################################################################
 # Look for PyGTK
 #

@@ -31,6 +31,7 @@ import config
 from funcs import *
 from gsch2pcbproject import Gsch2PCBProject
 from pcbmanager import PCBManager
+from new_project_gui import NewProjectAssistant
 
 try:
     import gnomevfs
@@ -183,6 +184,7 @@ class MonitorWindow(gtk.Window):
         self.aboutdialog.set_authors(['Peter Brett', 'Peter Clifton'])
         gtk.about_dialog_set_url_hook(about_url_cb, None)
         self.aboutdialog.set_website('http://geda.seul.org/')
+        self.aboutdialog.set_transient_for( self )
 
         self.pcbmanager = None
         self.set_project(project)
@@ -457,62 +459,16 @@ class MonitorWindow(gtk.Window):
 
     def event_new_button_clicked( self, button ):
 
+        def new_project_apply( assistant, filename ):
+            self.set_project( filename )
+
         if self.close_project( _("creating a new project")):
             # User cancelled out of creating a new project
             return
 
-        d = gtk.FileChooserDialog(_('New project...'), self,
-                              (gtk.DIALOG_MODAL | 
-                               gtk.DIALOG_DESTROY_WITH_PARENT),
-                              (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                               gtk.STOCK_NEW, gtk.RESPONSE_OK))
-        filter = gtk.FileFilter()
-        filter.add_pattern('*.gsch2pcb')
-        d.set_filter(filter)
-        d.set_do_overwrite_confirmation( True )
-        d.set_action(gtk.FILE_CHOOSER_ACTION_SAVE)
-
-        d.show_all()
-        r = d.run()
-        d.hide_all()
-
-        if r != gtk.RESPONSE_OK:
-            return
-
-        filename = d.get_filename()
-        if not filename.endswith('.gsch2pcb'):
-            filename += '.gsch2pcb'
-
-        # Create a new zero-length file
-        try:
-            open(filename, 'w').close()
-        except IOError, (errno, strerror):
-            md = gtk.MessageDialog(self,
-                                   (gtk.DIALOG_MODAL |
-                                    gtk.DIALOG_DESTROY_WITH_PARENT),
-                                   gtk.MESSAGE_ERROR,
-                                   gtk.BUTTONS_OK )
-
-            md.set_markup( _('<span weight="bold" size="larger">Could not create project</span>\n\nError %i: %s') % (errno, strerror) )
-            md.show_all()
-            md.run()
-            md.hide_all()
-            return
-        except:
-            #TODO: Provide a GUI Dialog for this
-            md = gtk.MessageDialog(self,
-                                   (gtk.DIALOG_MODAL |
-                                    gtk.DIALOG_DESTROY_WITH_PARENT),
-                                   gtk.MESSAGE_ERROR,
-                                   gtk.BUTTONS_OK )
-
-            md.set_markup( _('<span weight="bold" size="larger">Could not create project</span>') )
-            md.show_all()
-            md.run()
-            md.hide_all()
-            return
-
-        self.set_project(filename)
+        assistant = NewProjectAssistant(self)
+        assistant.connect( 'project-apply', new_project_apply )
+        assistant.show_all()
 
     def event_open_button_clicked( self, button ):
        
@@ -806,7 +762,7 @@ class AddPageDialog(gtk.Dialog):
                              gtk.DIALOG_DESTROY_WITH_PARENT),
                             (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
                              gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
-        
+        self.set_position( gtk.WIN_POS_CENTER_ON_PARENT )
 
         table = gtk.Table(2,2)
         

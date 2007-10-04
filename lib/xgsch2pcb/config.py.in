@@ -23,5 +23,5 @@ PACKAGE="@PACKAGE@"
 VERSION="@VERSION@"
 prefix="@prefix@"
 pkglibdir="@pkglibdir@"
-prefix="@prefix@"
+templatesdir="@templatesdir@"
 
