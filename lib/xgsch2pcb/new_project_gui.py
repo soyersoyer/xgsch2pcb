@@ -26,8 +26,9 @@ _ = t.ugettext
 
 # xgsch2pcb-specific modules
 from templates import *
+from assistant import *
 
-class NewProjectAssistant(gtk.Assistant):
+class NewProjectAssistant(Assistant):
 
     __gsignals__ = { 'project-apply' :
                             ( gobject.SIGNAL_NO_RECURSE,
@@ -38,9 +39,6 @@ class NewProjectAssistant(gtk.Assistant):
     template = None
 
     def assistant_apply(self, assistant):
-
-        # Change to the specified location
-        os.path.chdir( self.get_path() )
 
         # TODO: Why special case testing the writability of just this ONE output file?
         filename = self.get_filename()
@@ -133,7 +131,7 @@ class NewProjectAssistant(gtk.Assistant):
         return projectname
 
     def __init__(self, parent):
-        gtk.Assistant.__init__(self)
+        Assistant.__init__(self)
         self.set_transient_for( parent )
         self.set_position( gtk.WIN_POS_CENTER_ON_PARENT )
 
@@ -205,7 +203,7 @@ class NewProjectAssistant(gtk.Assistant):
 
         self.set_page_side_image(page,image)
 
-        self.set_page_type(page, gtk.ASSISTANT_PAGE_CONTENT)
+        self.set_page_type(page, ASSISTANT_PAGE_CONTENT)
         self.set_page_complete(page, True)
         self.template_page = page
 
@@ -245,10 +243,16 @@ class NewProjectAssistant(gtk.Assistant):
         label = gtk.Label(_("Location:"))
         label.set_alignment(0, 0.5)
         table.attach(label, 0, 1, 1, 2, gtk.FILL, 0)
+
+        def filebutton_selection_changed_cb(filechooser):
+            # Change to the specified location
+            os.chdir( self.get_path() )
+
         self.filebutton = gtk.FileChooserButton(_('Select project location...'))
-        #self.filebutton.connect( "selection-changed", self.event_filebutton_selection_changed )
+        self.filebutton.connect( "selection-changed", filebutton_selection_changed_cb )
         self.filebutton.set_local_only(True)
         self.filebutton.set_action(gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER)
+
         table.attach(self.filebutton, 1, 2, 1, 2, gtk.FILL | gtk.EXPAND, 0)
 
         options.pack_start(table, False, False)
@@ -256,7 +260,7 @@ class NewProjectAssistant(gtk.Assistant):
         self.append_page(page)
         self.set_page_title(page, _("Create new project"))
         self.set_page_side_image(page,image)
-        self.set_page_type(page, gtk.ASSISTANT_PAGE_CONTENT)
+        self.set_page_type(page, ASSISTANT_PAGE_CONTENT)
         self.set_page_complete(page, False)
         self.filename_page = page
 
@@ -328,7 +332,7 @@ class NewProjectAssistant(gtk.Assistant):
         self.append_page(page)
         self.set_page_title(page, _("Create new project"))
         self.set_page_side_image(page,image)
-        self.set_page_type(page, gtk.ASSISTANT_PAGE_CONFIRM)
+        self.set_page_type(page, ASSISTANT_PAGE_CONFIRM)
         self.summary_page = page
 
 
