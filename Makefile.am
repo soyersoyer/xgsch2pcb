@@ -28,13 +28,13 @@ pkglib_PYTHON = lib/xgsch2pcb/pcbmanager.py \
  lib/xgsch2pcb/templates.py \
  lib/xgsch2pcb/funcs.py
 
-nodist_pkglib_PYTHON = lib/xgsch2pcb/config.py
+nodist_pkglib_PYTHON = config.py
 
 dist_noinst_SCRIPTS = tools/pygettext.py \
  tools/msgfmt.py
  
 EXTRA_DIST = xgsch2pcb.in lib/xgsch2pcb/config.py.in
-CLEANFILES = xgsch2pcb lib/xgsch2pcb/config.py
+CLEANFILES = xgsch2pcb config.py
 
 templatesdir = @templatesdir@
 
@@ -45,12 +45,13 @@ do_subst = sed -e 's,[@]prefix[@],$(prefix),g' \
 							 -e 's,[@]templatesdir[@],$(templatesdir),g' \
 							 -e 's,[@]PACKAGE[@],$(PACKAGE),g'
 
-all: $(pkglib_PYTHON)
+all: $(pkglib_PYTHON) $(nodist_pkglib_PYTHON)
 
-lib/xgsch2pcb/config.py: lib/xgsch2pcb/config.py.in Makefile
-	$(do_subst) < $(srcdir)/lib/xgsch2pcb/config.py.in > lib/xgsch2pcb/config.py
+config.py: lib/xgsch2pcb/config.py.in Makefile
+	$(do_subst) < $(srcdir)/lib/xgsch2pcb/config.py.in > $@
 
 xgsch2pcb: xgsch2pcb.in Makefile
-	$(do_subst) < $(srcdir)/xgsch2pcb.in > xgsch2pcb
+	$(do_subst) < $(srcdir)/xgsch2pcb.in > $@
 	chmod +x xgsch2pcb
+
 
