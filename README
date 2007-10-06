@@ -25,18 +25,19 @@ Requirements
 
 ``xgsch2pcb`` requires:
 
- * Python 2.4 (or later)
-
- * PyGTK 2.8 (or later)
-
+ * python >= 2.4
+ * python-gtk2 >= 2.8
+ * python-gobject (if using python-gtk2 >= 2.10)
+ * python-dbus
  * A recent version of the gEDA suite
-
  * A version of ``pcb`` compiled with D-Bus support.
 
-Building ``xgsch2pcb`` from source code requires:
+Optionally:
+ * python-gnome2 (For launching the about URL)
 
- * autoconf 2.59 (or later)
+Building ``xgsch2pcb`` from source code additionally requires:
 
+ * autoconf >= 2.59
  * automake
 
 
