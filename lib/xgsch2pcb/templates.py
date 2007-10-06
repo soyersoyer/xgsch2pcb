@@ -124,8 +124,7 @@ class gsch2pcb_template:
         shutil.copy( template_path( self.template, output_file ), new_output_file )
 
         # Create a new gsch2pcb project in the new location, with the new output filename
-        # TODO: REMOVE HARDCODED EXTENSION
-        new_project = Gsch2PCBProject( projectname + '.gsch2pcb', new_output_name )
+        new_project = Gsch2PCBProject( None, new_output_name )
 
         # Copy schematic pages, and add to the new project
         for page_file in self.template_project.pages:
@@ -134,4 +133,6 @@ class gsch2pcb_template:
             new_project.add_page( new_page_file )
 
         # TODO: We could just hand off the new project file without saving of course?
-        new_project.save()
+        # TODO: REMOVE HARDCODED EXTENSION
+        new_project.save(projectname + '.gsch2pcb')
+
