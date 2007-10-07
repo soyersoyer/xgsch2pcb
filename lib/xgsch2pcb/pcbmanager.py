@@ -90,7 +90,7 @@ class PCBManager( gobject.GObject ):
             # TODO: Is there some clever way to bring PCB to front?
             # Possibly send it an action which does a window-manager request?
             return
-        Popen([self.toolpath, self.output_name + ".pcb"])
+        Popen([self.toolpath, os.path.abspath( self.output_name + ".pcb" )])
         while not self.is_layout_open():
             time.sleep( 0.1 )
         assert self.is_layout_open()
