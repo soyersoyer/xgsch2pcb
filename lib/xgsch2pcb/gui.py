@@ -751,8 +751,34 @@ class MonitorWindow(gtk.Window):
 
     def update_layout( self ):
         # TODO: Catch any exceptions which might prevent this working
-        self.pcbmanager.update_layout( self.project.pages )
-        
+        unfound = self.pcbmanager.update_layout( self.project.pages )
+        if len(unfound) > 0:
+            results_string = '<span weight="bold" size="larger">' + \
+                             _('Elements missing from layout') + '</span>\n\n' + \
+                             _('The footprints for the following elements were not found.\nPlease check the \'footprint\' attribute for these elements:\n')
+
+            for [ refdes, footprint ] in unfound:
+                results_string = results_string + '\n  ' + refdes + ' (footprint=' + footprint + ')'
+
+            md = gtk.MessageDialog(self,
+                                   (gtk.DIALOG_MODAL |
+                                    gtk.DIALOG_DESTROY_WITH_PARENT),
+                                   gtk.MESSAGE_WARNING,
+                                   gtk.BUTTONS_OK)
+
+            md.set_markup( results_string )
+
+            # Set GUI spacings
+            md.set_border_width( 6 )
+            md.vbox.set_spacing( 12 )
+            #md.hbox.border_width( 6 )
+            #md.hbox.set_spacing( 12 )
+
+            md.show_all()
+            md.run()
+            md.hide_all()
+
+
 gobject.type_register( MonitorWindow )
 
 class AddPageDialog(gtk.Dialog):

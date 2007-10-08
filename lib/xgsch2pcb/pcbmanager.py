@@ -221,7 +221,7 @@ class PCBManager( gobject.GObject ):
             error_restore_backup()
             # TODO: TELL PCB TO ALLOW USER ACTIONS
             # TODO: ERROR MESSAGE TO USER
-            return
+            return []
 
         # Copy saved layout to backup
         shutil.copy(self.output_name + ".pcb", self.output_name + ".savedbackup.pcb")
@@ -234,40 +234,62 @@ class PCBManager( gobject.GObject ):
         gsch2pcb_cmd = self.gsch2pcbpath + ' -q "' + self.output_name + '.tmp.gsch2pcb"'
         gsch2pcb_output = commands.getstatusoutput(gsch2pcb_cmd)
         lines = gsch2pcb_output[1].splitlines()
+        unfound = []
+        gsch2pcb_backup = None
         for line in lines:
             print "<gsch2pcb>:", line
 
-        # TODO: HANDLE ERROR OUTPUT FROM gsch2pcb!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        
-        # Load layout
-        if self.pcb_actions_iface.ExecAction("LoadFrom", [ "Revert", self.output_name + ".pcb" ]):
-            error_restore_backup()
-            # TODO: TELL PCB TO ALLOW USER ACTIONS
-            # TODO: ERROR MESSAGE TO USER
-            return
-        
+            search = ' is backed up as '
+            found_idx = line.find( search )
+            if found_idx >= 0:
+                # The last character is a ".", so don't return that.
+                gsch2pcb_backup = line[ found_idx + len(search) : len(line) -1 ]
+
+            search = ': can\'t find PCB element for footprint '
+            found_idx = line.find( search )
+            if found_idx >= 0:
+                refdes = line[ 0 : found_idx ]
+                end_fp_idx = line.find( " (value=", found_idx )
+                footprint = line[ found_idx + len( search ) : end_fp_idx ]
+                unfound.append( [ refdes, footprint ] )
+
+        # TODO: Report to the user the backup filename made by xgsch2pcb (or us?)
+        #       if they don't like the changes.
+
+        # TODO: HANDLE ERROR OUTPUT FROM gsch2pcb!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+        # Load new layout (if gsch2pcb modified it)
+        # otherwise, don't force the revert as it destroys the users UNDO history
+        if gsch2pcb_backup:
+            if self.pcb_actions_iface.ExecAction("LoadFrom", [ "Revert", self.output_name + ".pcb" ]):
+                error_restore_backup()
+                # TODO: TELL PCB TO ALLOW USER ACTIONS
+                # TODO: ERROR MESSAGE TO USER
+                return []
+
         # Delete rats
         if self.pcb_actions_iface.ExecAction("DeleteRats", ["AllRats"]):
             # TODO: WARNING TO USER?
             pass
-        
+
         # Load netlist
         if self.pcb_actions_iface.ExecAction("LoadFrom", ["Netlist", self.output_name + ".net"]):
             # TODO: WARNING TO THE USER?
             pass
-        
+
         # If new elements exist, put them in the paste-buffer
+        # FIXME: This overwrites the pastebuffer... hopefully the user didn't have anything useful in there!
         newparts = self.output_name + ".new.pcb"
         if os.path.exists (newparts):
             if self.pcb_actions_iface.ExecAction("LoadFrom", ["LayoutToBuffer", newparts]):
                 # TODO: WARN USER?
                 pass
-       
+
             # Paste the new components near the origin
             if self.pcb_actions_iface.ExecAction("PasteBuffer", ["ToLayout","10","10","mil"]):
                 # TODO: WARN USER?
                 pass
-            
+
             # Change back to the "none" (select) tool
             if self.pcb_actions_iface.ExecAction("Mode", ["None"]):
                 # TODO: WARN USER?
@@ -287,7 +309,7 @@ class PCBManager( gobject.GObject ):
         cleanup_files()
 
         print _("********DONE UPDATING********")
-            
+        return unfound
 
 gobject.type_register( PCBManager )
 
