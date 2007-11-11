@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+GenericName=xgsch2pcb
+_Name=gEDA Schematic -> PCB Project
+_Comment=Create and edit electronics projects with xgsch2pcb
+Type=Application
+Exec=xgsch2pcb
+Icon=xgsch2pcb
+Categories=Engineering;Electronics

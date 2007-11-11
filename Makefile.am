@@ -18,7 +18,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
-SUBDIRS = po
+SUBDIRS = po data
 
 bin_SCRIPTS = xgsch2pcb
 
@@ -40,7 +40,7 @@ INTLTOOL_FILES = tools/intltool-extract.in \
                  tools/intltool-update.in
 
 EXTRA_DIST = xgsch2pcb.in lib/xgsch2pcb/config.py.in \
-             $(INTLTOOL_FILES)
+             $(INTLTOOL_FILES) icon-theme-installer
 CLEANFILES = xgsch2pcb config.py
 DISTCLEANFILES = intltool-extract \
                  intltool-merge \
@@ -65,4 +65,4 @@ xgsch2pcb: xgsch2pcb.in Makefile
 	$(do_subst) < $(srcdir)/xgsch2pcb.in > $@
 	chmod +x xgsch2pcb
 
-
+DISTCHECK_CONFIGURE_FLAGS = --disable-update-desktop-database
