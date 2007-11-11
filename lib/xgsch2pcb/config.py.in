@@ -24,4 +24,4 @@ VERSION="@VERSION@"
 prefix="@prefix@"
 pkglibdir="@pkglibdir@"
 templatesdir="@templatesdir@"
-
+localedir="@prefix@/share/locale"

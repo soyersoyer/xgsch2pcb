@@ -18,6 +18,8 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 
+SUBDIRS = po
+
 bin_SCRIPTS = xgsch2pcb
 
 pkglib_PYTHON = lib/xgsch2pcb/pcbmanager.py \
@@ -32,9 +34,18 @@ nodist_pkglib_PYTHON = config.py
 
 dist_noinst_SCRIPTS = tools/pygettext.py \
  tools/msgfmt.py
- 
-EXTRA_DIST = xgsch2pcb.in lib/xgsch2pcb/config.py.in
+
+INTLTOOL_FILES = tools/intltool-extract.in \
+                 tools/intltool-merge.in \
+                 tools/intltool-update.in
+
+EXTRA_DIST = xgsch2pcb.in lib/xgsch2pcb/config.py.in \
+             $(INTLTOOL_FILES)
 CLEANFILES = xgsch2pcb config.py
+DISTCLEANFILES = intltool-extract \
+                 intltool-merge \
+                 intltool-update \
+                 po/.intltool-merge-cache
 
 templatesdir = @templatesdir@
 

@@ -27,6 +27,7 @@ import sys, gtk, os.path
 # xgsch2pcb needs to know its installation prefix in order to find its files
 prefix = '@prefix@'
 pkglibdir = '@pkglibdir@'
+localedir = '@prefix@/share/locale'
 
 libpath = os.path.abspath(pkglibdir)
 if libpath not in sys.path:
@@ -35,7 +36,7 @@ if libpath not in sys.path:
 # Check i18n
 import gettext
 try:
-    t = gettext.translation('xgsch2pcb')
+    t = gettext.translation('@PACKAGE@', localedir)
 except IOError:
     print 'Warning: Failed to load gettext translations'
 

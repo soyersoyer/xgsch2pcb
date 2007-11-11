@@ -7,3 +7,6 @@ configure
 config.log
 config.status
 config.py
+intltool-extract
+intltool-merge
+intltool-update

@@ -20,8 +20,10 @@
 
 import gtk, gtk.gdk, gobject
 
+import config
+
 import gettext
-t = gettext.translation('xgsch2pcb', fallback=True)
+t = gettext.translation(config.PACKAGE, config.localedir, fallback=True)
 _ = t.ugettext
 
 # xgsch2pcb-specific modules

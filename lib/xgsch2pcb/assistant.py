@@ -22,10 +22,6 @@
 
 import gtk, gtk.gdk, pango, gobject
 
-import gettext
-t = gettext.translation('xgsch2pcb', fallback=True)
-_ = t.ugettext
-
 
 ASSISTANT_PAGE_CONTENT  = 0
 ASSISTANT_PAGE_INTRO    = 1

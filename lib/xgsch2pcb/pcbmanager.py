@@ -23,9 +23,11 @@ from __future__ import generators
 import commands, shutil, re, gobject, os, sys, time
 import dbus, dbus.glib, dbus.service
 
+import config
+
 # i18n
 import gettext
-t = gettext.translation('xgsch2pcb', fallback=True)
+t = gettext.translation(config.PACKAGE, config.localedir, fallback=True)
 _ = t.ugettext
 
 # xgsch2pcb-specific modules

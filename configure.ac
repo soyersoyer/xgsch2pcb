@@ -36,7 +36,7 @@ GTK_WANTVERSION=2.8
 # Checks for programs.
 AC_PROG_INSTALL
 AM_PATH_PYTHON($PYTHON_WANTVERSION)
-
+IT_PROG_INTLTOOL(0.35.0)
 
 AC_DEFUN([AC_PYTHON_MODULE],[
     AC_MSG_CHECKING([for python module $1])
@@ -51,6 +51,39 @@ AC_DEFUN([AC_PYTHON_MODULE],[
     fi
 ])
 
+
+############################################################################
+# Update desktop database utility start
+#
+
+AC_ARG_ENABLE(update-desktop-database,
+   AC_HELP_STRING([--disable-update-dektop-database],
+                   [do not update desktop file database after installation]),,
+                   enable_update_desktop_database=yes)
+
+AM_CONDITIONAL(ENABLE_UPDATE_DESKTOP_DATABASE,
+               test x$enable_update_desktop_database = xyes)
+
+if test x$enable_update_desktop_database = xyes ; then
+  AC_PATH_PROG(UPDATE_DESKTOP_DATABASE, [update-desktop-database], no)
+  if test $UPDATE_DESKTOP_DATABASE = no; then
+     AC_MSG_ERROR([Cannot find update-desktop-database, make sure it is installed and in your PATH, or configure with --disable-update-desktop-database])
+  fi
+fi
+
+#
+# Update mime database utility end
+############################################################################
+
+# Set USE_NLS
+AM_NLS
+
+# Find GMSGFMT
+AC_PATH_PROG(GMSGFMT, msgfmt)
+
+# Set package name for translations
+GETTEXT_PACKAGE=$PACKAGE
+AC_SUBST(GETTEXT_PACKAGE)
 
 ##########################################################################
 # Command line flags start
@@ -138,6 +171,9 @@ if test $interpval == 'no'; then
   AC_MSG_ERROR([Your system must support the shell bang syntax]);
 fi
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile
+                 data/Makefile
+                 po/Makefile.in
+                 po/Makefile])
 AC_OUTPUT
 

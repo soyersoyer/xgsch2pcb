@@ -1,0 +1,3 @@
+lib/xgsch2pcb/gui.py
+lib/xgsch2pcb/new_project_gui.py
+lib/xgsch2pcb/pcbmanager.py
