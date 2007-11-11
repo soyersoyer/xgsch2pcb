@@ -72,10 +72,11 @@ AC_SUBST(templatesdir)
 AC_PYTHON_MODULE(pygtk, t)
 
 AC_MSG_CHECKING(for pygtk 2.0)
-cat > conftest.py <<< ['
+cat > conftest.py <<[EOF
 import pygtk
 pygtk.require("2.0")
-']
+EOF]
+
 if $PYTHON conftest.py > /dev/null 2>&1; then
     AC_MSG_RESULT(yes)
 else
@@ -88,7 +89,7 @@ for module in gobject gtk gtk.gdk; do
 done
 
 AC_MSG_CHECKING(for gtk+ >= $GTK_WANTVERSION)
-cat > conftest.py <<< ['
+cat > conftest.py <<[EOF
 import sys
 try:
     import gtk
@@ -105,7 +106,8 @@ try:
 except:
     sys.exit(1)
 sys.exit(0)
-']
+EOF]
+
 GTK_VERSION=`$PYTHON conftest.py $GTK_WANTVERSION 2> /dev/null`
 haveversion=$?
 AC_MSG_RESULT($GTK_VERSION)
