@@ -72,7 +72,7 @@ if test x$enable_update_desktop_database = xyes ; then
 fi
 
 #
-# Update mime database utility end
+# Update desktop database utility end
 ############################################################################
 
 # Set USE_NLS
