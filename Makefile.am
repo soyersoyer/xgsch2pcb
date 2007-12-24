@@ -32,9 +32,6 @@ pkglib_PYTHON = lib/xgsch2pcb/pcbmanager.py \
 
 nodist_pkglib_PYTHON = config.py
 
-dist_noinst_SCRIPTS = tools/pygettext.py \
- tools/msgfmt.py
-
 INTLTOOL_FILES = tools/intltool-extract.in \
                  tools/intltool-merge.in \
                  tools/intltool-update.in
