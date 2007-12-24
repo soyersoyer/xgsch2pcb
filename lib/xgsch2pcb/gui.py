@@ -185,6 +185,7 @@ class MonitorWindow(gtk.Window):
         self.aboutdialog.set_authors(['Peter Brett', 'Peter Clifton'])
         gtk.about_dialog_set_url_hook(about_url_cb, None)
         self.aboutdialog.set_website('http://geda.seul.org/')
+        self.aboutdialog.set_translator_credits(_('translator-credits'))
         self.aboutdialog.set_transient_for( self )
 
         self.pcbmanager = None
