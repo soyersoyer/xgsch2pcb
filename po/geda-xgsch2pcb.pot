@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-10 23:44+0000\n"
+"POT-Creation-Date: 2007-12-24 15:25+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,7 @@ msgstr ""
 msgid "Edit layout"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:159 ../lib/xgsch2pcb/gui.py:428
+#: ../lib/xgsch2pcb/gui.py:159 ../lib/xgsch2pcb/gui.py:429
 msgid "Update layout"
 msgstr ""
 
@@ -53,13 +53,17 @@ msgstr ""
 msgid "a GUI for gsch2pcb"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:302
+#: ../lib/xgsch2pcb/gui.py:188
+msgid "translator-credits"
+msgstr ""
+
+#: ../lib/xgsch2pcb/gui.py:303
 msgid ""
 "You must select either an existing schematic file or enter a filename for a "
 "new file."
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:317
+#: ../lib/xgsch2pcb/gui.py:318
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Selected file is outside the project "
 "directory\n"
@@ -69,11 +73,11 @@ msgid ""
 "move or delete any external files, or the project will be incomplete."
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:326
+#: ../lib/xgsch2pcb/gui.py:327
 msgid "_Add anyway"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:352
+#: ../lib/xgsch2pcb/gui.py:353
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Could not create schematic</span>\n"
@@ -81,58 +85,58 @@ msgid ""
 "Error %i: %s"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:365
+#: ../lib/xgsch2pcb/gui.py:366
 msgid "<span weight=\"bold\" size=\"larger\">Could not create schematic</span>"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:407
+#: ../lib/xgsch2pcb/gui.py:408
 #, python-format
 msgid "Could not locate tool: %s"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:426
+#: ../lib/xgsch2pcb/gui.py:427
 msgid ""
 "Your schematic has changed.\n"
 "\n"
 "Would you like to update your PCB layout?"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:427
+#: ../lib/xgsch2pcb/gui.py:428
 msgid "Leave layout unchanged"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:466
+#: ../lib/xgsch2pcb/gui.py:467
 msgid "creating a new project"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:476
+#: ../lib/xgsch2pcb/gui.py:477
 msgid "opening a new project"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:485
+#: ../lib/xgsch2pcb/gui.py:486
 msgid "Open Project..."
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:518
+#: ../lib/xgsch2pcb/gui.py:519
 msgid "closing the project"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:543
+#: ../lib/xgsch2pcb/gui.py:544
 msgid " [modified]"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:591
+#: ../lib/xgsch2pcb/gui.py:592
 msgid "exiting"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:631
+#: ../lib/xgsch2pcb/gui.py:632
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Problem initialising</span>\n"
 "%s"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:668 ../lib/xgsch2pcb/gui.py:698
+#: ../lib/xgsch2pcb/gui.py:669 ../lib/xgsch2pcb/gui.py:699
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
@@ -140,14 +144,14 @@ msgid ""
 "Close the layout editor before %s."
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:671 ../lib/xgsch2pcb/gui.py:701
+#: ../lib/xgsch2pcb/gui.py:672 ../lib/xgsch2pcb/gui.py:702
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
 "\n"
 "Close the layout editor first."
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:726
+#: ../lib/xgsch2pcb/gui.py:727
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Save the changes to project \"%s\" "
@@ -156,46 +160,46 @@ msgid ""
 "Any changes made since the last save will be lost."
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:731
+#: ../lib/xgsch2pcb/gui.py:732
 msgid "Close _without Saving"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:758
+#: ../lib/xgsch2pcb/gui.py:759
 msgid "Elements missing from layout"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:759
+#: ../lib/xgsch2pcb/gui.py:760
 msgid ""
 "The footprints for the following elements were not found.\n"
 "Please check the 'footprint' attribute for these elements:\n"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:787
+#: ../lib/xgsch2pcb/gui.py:788
 msgid "Add schematic page..."
 msgstr ""
 
 #. Two radio buttons allow you to select whether to use an
 #. existing file or create a new file
-#: ../lib/xgsch2pcb/gui.py:810
+#: ../lib/xgsch2pcb/gui.py:811
 msgid "From file:"
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:820
+#: ../lib/xgsch2pcb/gui.py:821
 msgid "Create new:"
 msgstr ""
 
 #. File chooser button to select and existing file.  Currently
 #. limited to local files 'cos gsch2pcb can't handle remote
 #. files.
-#: ../lib/xgsch2pcb/gui.py:833
+#: ../lib/xgsch2pcb/gui.py:834
 msgid "Select schematic page..."
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:900
+#: ../lib/xgsch2pcb/gui.py:901
 msgid "New project..."
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:933
+#: ../lib/xgsch2pcb/gui.py:934
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">A project named \"%s\" already exists. "
@@ -205,7 +209,7 @@ msgid ""
 "its contents."
 msgstr ""
 
-#: ../lib/xgsch2pcb/gui.py:943
+#: ../lib/xgsch2pcb/gui.py:944
 msgid "_Replace"
 msgstr ""
 
@@ -298,9 +302,9 @@ msgid "********DONE UPDATING********"
 msgstr ""
 
 #: ../data/geda-xgsch2pcb.desktop.in.h:1
-msgid "Schematic -> PCB Project"
+msgid "Create and edit electronics projects with xgsch2pcb"
 msgstr ""
 
 #: ../data/geda-xgsch2pcb.desktop.in.h:2
-msgid "gEDA xgschp2cb project manager"
+msgid "gEDA Schematic -> PCB Project"
 msgstr ""
