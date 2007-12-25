@@ -32,9 +32,9 @@ pkglib_PYTHON = lib/xgsch2pcb/pcbmanager.py \
 
 nodist_pkglib_PYTHON = config.py
 
-INTLTOOL_FILES = tools/intltool-extract.in \
-                 tools/intltool-merge.in \
-                 tools/intltool-update.in
+INTLTOOL_FILES = intltool-extract.in \
+                 intltool-merge.in \
+                 intltool-update.in
 
 EXTRA_DIST = xgsch2pcb.in lib/xgsch2pcb/config.py.in \
              $(INTLTOOL_FILES) icon-theme-installer
