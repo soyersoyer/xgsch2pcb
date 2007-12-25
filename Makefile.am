@@ -43,6 +43,10 @@ DISTCLEANFILES = intltool-extract \
                  intltool-merge \
                  intltool-update \
                  po/.intltool-merge-cache
+MAINTAINERCLEANFILES = Makefile.in configure config.h.in \
+                       config.status aclocal.m4 libgeda.pc config.guess \
+                       config.sub depcomp install-sh missing mkinstalldirs \
+                       $(INTLTOOL_FILES)
 
 templatesdir = @templatesdir@
 
