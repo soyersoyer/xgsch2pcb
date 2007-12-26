@@ -62,7 +62,7 @@ msgstr "een GUI voor gsch2pcb"
 
 #: ../lib/xgsch2pcb/gui.py:188
 msgid "translator-credits"
-msgstr "Vertaler-kredieten"
+msgstr "Bert Timmerman"
 
 #: ../lib/xgsch2pcb/gui.py:303
 msgid "You must select either an existing schematic file or enter a filename for a new file."
