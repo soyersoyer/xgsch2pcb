@@ -1,0 +1,353 @@
+# Dutch translation for xgsch2pcb.
+# Copyright (C) 2007, 2008 Peter Brett, Peter Clifton and the respective original authors (which are listed on the respective files).
+# This file is distributed under the same license as the xgsch2pcb package.
+# Bert Timmerman <bert.timmerman@xs4all.nl>, 2007.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: xgsch2pcb\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-12-24 15:25+0000\n"
+"PO-Revision-Date: 2007-12-26 20:31+0100\n"
+"Last-Translator: Bert Timmerman <bert.timmerman@xs4all.nl>\n"
+"Language-Team: gEDA developers <geda-dev@moira.seul.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Dutch\n"
+"X-Poedit-Country: NETHERLANDS\n"
+
+# Bladzijde bewerkende widgets
+# ----------------------------
+#. Page editing widgets
+#. --------------------
+#: ../lib/xgsch2pcb/gui.py:75
+msgid "Schematic pages"
+msgstr "Schema bladzijden"
+
+# Knoppen om gschem/gattrib uit te voeren
+#. Buttons to run gschem/gattrib
+#: ../lib/xgsch2pcb/gui.py:115
+msgid "Edit schematic"
+msgstr "Bewerk schema"
+
+#: ../lib/xgsch2pcb/gui.py:127
+msgid "Edit attributes"
+msgstr "Bewerk attributen"
+
+# Opmaak bewerking widgets
+# ------------------------
+#. Layout editing widgets
+#. ----------------------
+#: ../lib/xgsch2pcb/gui.py:142
+msgid "Layout"
+msgstr "Opmaak"
+
+#: ../lib/xgsch2pcb/gui.py:154
+msgid "Edit layout"
+msgstr "Bewerk opmaak"
+
+#: ../lib/xgsch2pcb/gui.py:159
+#: ../lib/xgsch2pcb/gui.py:429
+msgid "Update layout"
+msgstr "Hernieuw opmaak"
+
+#: ../lib/xgsch2pcb/gui.py:181
+msgid "xgsch2pcb"
+msgstr "xgsch2pcb"
+
+#: ../lib/xgsch2pcb/gui.py:182
+msgid "a GUI for gsch2pcb"
+msgstr "een GUI voor gsch2pcb"
+
+#: ../lib/xgsch2pcb/gui.py:188
+msgid "translator-credits"
+msgstr "Vertaler-kredieten"
+
+#: ../lib/xgsch2pcb/gui.py:303
+msgid "You must select either an existing schematic file or enter a filename for a new file."
+msgstr "Selecteer een bestaand schema bestand of voer de bestandsnaam voor een nieuw bestand in."
+
+#: ../lib/xgsch2pcb/gui.py:318
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Selected file is outside the project directory\n"
+"Add anyway?</span>\n"
+"\n"
+"Projects are best kept in self contained directories. Ensure that you don't move or delete any external files, or the project will be incomplete."
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Geselecteerde bestand is buiten de bestandenmap\n"
+"Toch toevoegen ?</span>\n"
+"\n"
+"Projecten kunnen het beste in een bestandenmap bewaard worden. Voorkom dat je externe bestanden verwijderd of verplaatst, het project wordt dan incompleet."
+
+#: ../lib/xgsch2pcb/gui.py:327
+msgid "_Add anyway"
+msgstr "Toch Toevoegen"
+
+#: ../lib/xgsch2pcb/gui.py:353
+#, python-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Could not create schematic</span>\n"
+"\n"
+"Error %i: %s"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Kan geen schema maken</span>\n"
+"\n"
+"Fout %i: %s"
+
+#: ../lib/xgsch2pcb/gui.py:366
+msgid "<span weight=\"bold\" size=\"larger\">Could not create schematic</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Kan geen schema maken</span>"
+
+#: ../lib/xgsch2pcb/gui.py:408
+#, python-format
+msgid "Could not locate tool: %s"
+msgstr "Kan gereedschap niet vinden: %s"
+
+#: ../lib/xgsch2pcb/gui.py:427
+msgid ""
+"Your schematic has changed.\n"
+"\n"
+"Would you like to update your PCB layout?"
+msgstr ""
+"Het schema is gewijzigd.\n"
+"\n"
+"Wil je de PCB opmaak hernieuwen ?"
+
+#: ../lib/xgsch2pcb/gui.py:428
+msgid "Leave layout unchanged"
+msgstr "Laat de opmaak ongewijzigd"
+
+#: ../lib/xgsch2pcb/gui.py:467
+msgid "creating a new project"
+msgstr "maak een nieuw project"
+
+#: ../lib/xgsch2pcb/gui.py:477
+msgid "opening a new project"
+msgstr "open een nieuw project"
+
+#: ../lib/xgsch2pcb/gui.py:486
+msgid "Open Project..."
+msgstr "Open Project..."
+
+#: ../lib/xgsch2pcb/gui.py:519
+msgid "closing the project"
+msgstr "sluit het project"
+
+#: ../lib/xgsch2pcb/gui.py:544
+msgid " [modified]"
+msgstr " [veranderd]"
+
+#: ../lib/xgsch2pcb/gui.py:592
+msgid "exiting"
+msgstr "beeindigen"
+
+#: ../lib/xgsch2pcb/gui.py:632
+#, python-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Problem initialising</span>\n"
+"%s"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Probleem tijdens initialiseren</span>\n"
+"%s"
+
+#: ../lib/xgsch2pcb/gui.py:669
+#: ../lib/xgsch2pcb/gui.py:699
+#, python-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
+"\n"
+"Close the layout editor before %s."
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Opmaak bewerking nog steeds geopend</span>\n"
+"\n"
+"Sluit de opmaak bewerking voordat %s."
+
+#: ../lib/xgsch2pcb/gui.py:672
+#: ../lib/xgsch2pcb/gui.py:702
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
+"\n"
+"Close the layout editor first."
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Opmaak bewerking nog steeds geopend</span>\n"
+"\n"
+"Sluit eerst de opmaak bewerking."
+
+#: ../lib/xgsch2pcb/gui.py:727
+#, python-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Save the changes to project \"%s\" before closing?</span>\n"
+"\n"
+"Any changes made since the last save will be lost."
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Sla de wijzigingen van project \"%s\" voordat je afsluit ?</span>\n"
+"\n"
+"Elke wijziging sinds de laatste keer opslaan zullen verloren gaan."
+
+#: ../lib/xgsch2pcb/gui.py:732
+msgid "Close _without Saving"
+msgstr "Afsluiten zonder Opslaan"
+
+#: ../lib/xgsch2pcb/gui.py:759
+msgid "Elements missing from layout"
+msgstr "Ontbrekende elementen van opmaak"
+
+#: ../lib/xgsch2pcb/gui.py:760
+msgid ""
+"The footprints for the following elements were not found.\n"
+"Please check the 'footprint' attribute for these elements:\n"
+msgstr ""
+"De patronen voor de volgende elementen werden niet gevonden.\n"
+"Controleer alstublieft de 'footprint' attribuut van deze elementen:\n"
+
+#: ../lib/xgsch2pcb/gui.py:788
+msgid "Add schematic page..."
+msgstr "Voeg schema pagina toe..."
+
+# Twee radioknoppen staan je toe om danwel een bestaand bestand te gebruiken,
+# danwel een nieuw bestand te creeren
+#. Two radio buttons allow you to select whether to use an
+#. existing file or create a new file
+#: ../lib/xgsch2pcb/gui.py:811
+msgid "From file:"
+msgstr "Van bestand:"
+
+#: ../lib/xgsch2pcb/gui.py:821
+msgid "Create new:"
+msgstr "Creer nieuwe:"
+
+# Bestandkeuze knop om een bestaand bestand te kiezen.
+# In de huidige toestand beperkt tot lokale bestanden omdat gsch2pcb niet
+# overweg kan met bestanden die niet lokaal zijn.
+#. File chooser button to select and existing file.  Currently
+#. limited to local files 'cos gsch2pcb can't handle remote
+#. files.
+#: ../lib/xgsch2pcb/gui.py:834
+msgid "Select schematic page..."
+msgstr "Selecteer schema pagina..."
+
+#: ../lib/xgsch2pcb/gui.py:901
+msgid "New project..."
+msgstr "Nieuw project..."
+
+#: ../lib/xgsch2pcb/gui.py:934
+#, python-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">A project named \"%s\" already exists. Do you want to replace it?</span>\n"
+"\n"
+"The project already exists in directory \"%s\". Replacing it will overwrite its contents."
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Een project genaamd \"%s\" bestaat reeds. Wil je dit vervangen ?</span>\n"
+"\n"
+"Het project bestaat reeds in bestandenmap \"%s\". Vervangen zal de inhoud overschrijven."
+
+#: ../lib/xgsch2pcb/gui.py:944
+msgid "_Replace"
+msgstr "Vervang"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:69
+#, python-format
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Could not create project</span>\n"
+"\n"
+"Error %i: %s"
+msgstr ""
+"<span weight=\"bold\" size=\"larger\">Kan project niet creeren</span>\n"
+"\n"
+"Fout %i: %s"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:81
+msgid "<span weight=\"bold\" size=\"larger\">Could not create project</span>"
+msgstr "<span weight=\"bold\" size=\"larger\">Kan project niet creeren</span>"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:150
+msgid "<b>Choose project template</b>"
+msgstr "<b>Kies project template</b>"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:161
+msgid "Blank"
+msgstr "Blanco"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:163
+msgid "From template:"
+msgstr "Van template:"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:174
+msgid "(No templates found)"
+msgstr "(Geen template gevonden)"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:204
+#: ../lib/xgsch2pcb/new_project_gui.py:263
+#: ../lib/xgsch2pcb/new_project_gui.py:335
+msgid "Create new project"
+msgstr "Creer nieuw project"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:225
+msgid "<b>Choose project filename</b>"
+msgstr "<b>Kies project bestandsnaam</b>"
+
+# TE DOEN: verwijder magische nummers
+# TE DOEN: verwijder magische nummers
+#. TODO: Remove magic numbers
+#. TODO: Remove magic numbers
+#: ../lib/xgsch2pcb/new_project_gui.py:240
+msgid "Project name:"
+msgstr "Project naam:"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:245
+msgid "Location:"
+msgstr "Lokatie:"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:253
+msgid "Select project location..."
+msgstr "Selekteer project lokatie..."
+
+#: ../lib/xgsch2pcb/new_project_gui.py:282
+msgid "<b>Project summary</b>"
+msgstr "<b>Project samenvatting</b>"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:294
+msgid "<b>New files to be created:</b>"
+msgstr "<b>Creer nieuwe bestanden:</b>"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:308
+msgid "<b>The following files would be overwritten:</b>"
+msgstr "<b>De volgende bestanden zouden overschreven worden:</b>"
+
+#: ../lib/xgsch2pcb/new_project_gui.py:325
+msgid "Confirm overwrite"
+msgstr "Bevestig overschrijven"
+
+#: ../lib/xgsch2pcb/pcbmanager.py:72
+msgid ""
+"\n"
+"Couldn't find 'pcb' executable"
+msgstr ""
+"\n"
+"Kan geen 'pcb' programma vinden"
+
+#: ../lib/xgsch2pcb/pcbmanager.py:75
+msgid ""
+"\n"
+"Couldn't find 'gsch2pcb' executable"
+msgstr ""
+"\n"
+"Kan 'gsch2pcb' programma niet vinden"
+
+#: ../lib/xgsch2pcb/pcbmanager.py:213
+msgid "********START UPDATING********"
+msgstr "********START MET BIJWERKEN********"
+
+#: ../lib/xgsch2pcb/pcbmanager.py:313
+msgid "********DONE UPDATING********"
+msgstr "********KLAAR MET BIJWERKEN********"
+
+#: ../data/geda-xgsch2pcb.desktop.in.h:1
+msgid "Create and edit electronics projects with xgsch2pcb"
+msgstr "Creer en bewerk electronika projecten met xgsch2pcb"
+
+#: ../data/geda-xgsch2pcb.desktop.in.h:2
+msgid "gEDA Schematic -> PCB Project"
+msgstr "gEDA Schema -> PCB Project"
+
