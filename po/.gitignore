@@ -13,3 +13,4 @@ stamp-po
 stamp-it
 .intltool-merge-cache
 *~
+geda-xgsch2pcb.pot
