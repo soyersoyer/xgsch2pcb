@@ -6,6 +6,6 @@ _Name=gEDA Schematic -> PCB Project
 _Comment=Create and edit electronics projects with xgsch2pcb
 Type=Application
 Exec=xgsch2pcb %f
-Icon=xgsch2pcb
+Icon=geda-xgsch2pcb
 MimeType=application/x-geda-gsch2pcb-project
 Categories=Engineering;Electronics

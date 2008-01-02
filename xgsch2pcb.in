@@ -43,7 +43,7 @@ except IOError:
 
 from gui import *
 
-gtk.window_set_default_icon_name('xgsch2pcb')
+gtk.window_set_default_icon_name('geda-xgsch2pcb')
 
 if len(sys.argv) > 1:
     window = MonitorWindow(sys.argv[1])

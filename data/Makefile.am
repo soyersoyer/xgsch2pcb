@@ -1,7 +1,7 @@
 theme=hicolor
 themedir=$(datadir)/icons/$(theme)
 
-app_icon = xgsch2pcb
+app_icon = geda-xgsch2pcb
 
 app_icon_files = \
 	$(app_icon:%=%-48.png) \
