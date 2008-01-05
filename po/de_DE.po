@@ -55,7 +55,7 @@ msgstr "Benutzeroberfläche für gsch2pcb"
 
 #: ../lib/xgsch2pcb/gui.py:188
 msgid "translator-credits"
-msgstr "Übersetzung"
+msgstr "Werner Hoch"
 
 #: ../lib/xgsch2pcb/gui.py:303
 msgid ""
