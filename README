@@ -48,7 +48,7 @@ If you have fetched the sources from the git repository you will need to
 create the necessary autoconf files. To do this, change into the source
 directory and execute the command:
 
-autoreconf
+  ./autogen.sh
 
 This generates a ./configure script amongst other things, which you can run
 to configure the software.
