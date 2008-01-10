@@ -56,7 +56,7 @@ AC_DEFUN([AC_PYTHON_MODULE],[
 #
 
 AC_ARG_ENABLE(update-desktop-database,
-   AC_HELP_STRING([--disable-update-dektop-database],
+   AC_HELP_STRING([--disable-update-desktop-database],
                    [do not update desktop file database after installation]),,
                    enable_update_desktop_database=yes)
 
@@ -92,6 +92,18 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_ARG_WITH(templatesdir, [  --with-templatesdir=path       Change where the template projects are found], [templatesdir=$withval],[templatesdir=$datarootdir/$PACKAGE/templates])
 
 AC_SUBST(templatesdir)
+
+# Change default location for XDG files (.desktop and icons)
+AC_ARG_WITH(xdgdatadir, [  --with-xdgdatadir=path  Change where the .desktop file and theme icons are installed [[DATADIR]]], [opt_xdgdatadir=$withval])
+
+if test x$opt_xdgdatadir = x; then
+        # path was not specified with --with-xdgdatadir
+        XDGDATADIR='${datadir}'
+else
+        # path WAS specified with --with-xdgdatadir
+        XDGDATADIR="$opt_xdgdatadir"
+fi
+AC_SUBST(XDGDATADIR)
 
 #
 # Command line flags end

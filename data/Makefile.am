@@ -1,5 +1,6 @@
 theme=hicolor
-themedir=$(datadir)/icons/$(theme)
+xdgdatadir=@XDGDATADIR@
+themedir=$(xdgdatadir)/icons/$(theme)
 
 app_icon = geda-xgsch2pcb
 
@@ -15,7 +16,7 @@ theme_icons = \
 	$(app_icon_files:%=apps,%)
 
 
-desktopdir=$(datadir)/applications
+desktopdir=$(xdgdatadir)/applications
 desktop_in_files = geda-xgsch2pcb.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
