@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xgsch2pcb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-24 15:25+0000\n"
+"POT-Creation-Date: 2008-01-09 15:53+0000\n"
 "PO-Revision-Date: 2007-12-26 20:31+0100\n"
 "Last-Translator: Bert Timmerman <bert.timmerman@xs4all.nl>\n"
 "Language-Team: gEDA developers <geda-dev@moira.seul.org>\n"
@@ -47,8 +47,7 @@ msgstr "Opmaak"
 msgid "Edit layout"
 msgstr "Bewerk opmaak"
 
-#: ../lib/xgsch2pcb/gui.py:159
-#: ../lib/xgsch2pcb/gui.py:429
+#: ../lib/xgsch2pcb/gui.py:159 ../lib/xgsch2pcb/gui.py:429
 msgid "Update layout"
 msgstr "Hernieuw opmaak"
 
@@ -65,20 +64,29 @@ msgid "translator-credits"
 msgstr "Bert Timmerman"
 
 #: ../lib/xgsch2pcb/gui.py:303
-msgid "You must select either an existing schematic file or enter a filename for a new file."
-msgstr "Selecteer een bestaand schema bestand of voer de bestandsnaam voor een nieuw bestand in."
+msgid ""
+"You must select either an existing schematic file or enter a filename for a "
+"new file."
+msgstr ""
+"Selecteer een bestaand schema bestand of voer de bestandsnaam voor een nieuw "
+"bestand in."
 
 #: ../lib/xgsch2pcb/gui.py:318
 msgid ""
-"<span weight=\"bold\" size=\"larger\">Selected file is outside the project directory\n"
+"<span weight=\"bold\" size=\"larger\">Selected file is outside the project "
+"directory\n"
 "Add anyway?</span>\n"
 "\n"
-"Projects are best kept in self contained directories. Ensure that you don't move or delete any external files, or the project will be incomplete."
+"Projects are best kept in self contained directories. Ensure that you don't "
+"move or delete any external files, or the project will be incomplete."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Geselecteerde bestand is buiten de bestandenmap\n"
+"<span weight=\"bold\" size=\"larger\">Geselecteerde bestand is buiten de "
+"bestandenmap\n"
 "Toch toevoegen ?</span>\n"
 "\n"
-"Projecten kunnen het beste in een bestandenmap bewaard worden. Voorkom dat je externe bestanden verwijderd of verplaatst, het project wordt dan incompleet."
+"Projecten kunnen het beste in een bestandenmap bewaard worden. Voorkom dat "
+"je externe bestanden verwijderd of verplaatst, het project wordt dan "
+"incompleet."
 
 #: ../lib/xgsch2pcb/gui.py:327
 msgid "_Add anyway"
@@ -151,37 +159,39 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">Probleem tijdens initialiseren</span>\n"
 "%s"
 
-#: ../lib/xgsch2pcb/gui.py:669
-#: ../lib/xgsch2pcb/gui.py:699
+#: ../lib/xgsch2pcb/gui.py:669 ../lib/xgsch2pcb/gui.py:699
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
 "\n"
 "Close the layout editor before %s."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Opmaak bewerking nog steeds geopend</span>\n"
+"<span weight=\"bold\" size=\"larger\">Opmaak bewerking nog steeds geopend</"
+"span>\n"
 "\n"
 "Sluit de opmaak bewerking voordat %s."
 
-#: ../lib/xgsch2pcb/gui.py:672
-#: ../lib/xgsch2pcb/gui.py:702
+#: ../lib/xgsch2pcb/gui.py:672 ../lib/xgsch2pcb/gui.py:702
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
 "\n"
 "Close the layout editor first."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Opmaak bewerking nog steeds geopend</span>\n"
+"<span weight=\"bold\" size=\"larger\">Opmaak bewerking nog steeds geopend</"
+"span>\n"
 "\n"
 "Sluit eerst de opmaak bewerking."
 
 #: ../lib/xgsch2pcb/gui.py:727
 #, python-format
 msgid ""
-"<span weight=\"bold\" size=\"larger\">Save the changes to project \"%s\" before closing?</span>\n"
+"<span weight=\"bold\" size=\"larger\">Save the changes to project \"%s\" "
+"before closing?</span>\n"
 "\n"
 "Any changes made since the last save will be lost."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Sla de wijzigingen van project \"%s\" voordat je afsluit ?</span>\n"
+"<span weight=\"bold\" size=\"larger\">Sla de wijzigingen van project \"%s\" "
+"voordat je afsluit ?</span>\n"
 "\n"
 "Elke wijziging sinds de laatste keer opslaan zullen verloren gaan."
 
@@ -234,13 +244,17 @@ msgstr "Nieuw project..."
 #: ../lib/xgsch2pcb/gui.py:934
 #, python-format
 msgid ""
-"<span weight=\"bold\" size=\"larger\">A project named \"%s\" already exists. Do you want to replace it?</span>\n"
+"<span weight=\"bold\" size=\"larger\">A project named \"%s\" already exists. "
+"Do you want to replace it?</span>\n"
 "\n"
-"The project already exists in directory \"%s\". Replacing it will overwrite its contents."
+"The project already exists in directory \"%s\". Replacing it will overwrite "
+"its contents."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Een project genaamd \"%s\" bestaat reeds. Wil je dit vervangen ?</span>\n"
+"<span weight=\"bold\" size=\"larger\">Een project genaamd \"%s\" bestaat "
+"reeds. Wil je dit vervangen ?</span>\n"
 "\n"
-"Het project bestaat reeds in bestandenmap \"%s\". Vervangen zal de inhoud overschrijven."
+"Het project bestaat reeds in bestandenmap \"%s\". Vervangen zal de inhoud "
+"overschrijven."
 
 #: ../lib/xgsch2pcb/gui.py:944
 msgid "_Replace"
@@ -350,4 +364,3 @@ msgstr "Creer en bewerk electronika projecten met xgsch2pcb"
 #: ../data/geda-xgsch2pcb.desktop.in.h:2
 msgid "gEDA Schematic -> PCB Project"
 msgstr "gEDA Schema -> PCB Project"
-
