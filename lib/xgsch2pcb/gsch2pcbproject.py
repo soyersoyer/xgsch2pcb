@@ -34,13 +34,14 @@ class Gsch2PCBProject(gobject.GObject):
                               gobject.TYPE_NONE,
                               (gobject.TYPE_STRING, )),
                    }
-                   
+
     def __init__(self, filename=None, output_name=None):
         gobject.GObject.__init__(self)
 
         self.filename = filename
         self.dirty = False
         self.pages = []
+        self.lines = []
 
         if output_name != None:
             self.output_name = output_name
@@ -68,17 +69,24 @@ class Gsch2PCBProject(gobject.GObject):
 
         fp = open(fromfile, 'rb')
         for line in fp:
+            self.lines.append(line)
             parts = line.strip().split(None, 1)
             opt = parts[0]
-            if opt == 'schematics':
+
+            # Skip blank lines and comment lines (like gsch2pcb)
+            if not opt or opt[0] == '#' or opt[0] == '/' or opt[0] == ';':
+                pass
+            # Pick out the list of schematics
+            elif opt == 'schematics':
                 if len(parts) > 1:
                     self.pages = parts[1].split()
                 else:
                     self.pages = []
+            # Pick out the output filename
             elif opt == 'output-name':
                 self.output_name = parts[1]
             else:
-                raise Exception, 'Unsupported project file option: %s' % line
+                print 'Warning: Unsupported project file line "%s"' % line.strip()
         fp.close()
         if fromfile == self.filename:
             self.set_dirty(False)
@@ -89,9 +97,27 @@ class Gsch2PCBProject(gobject.GObject):
         if destfile == None:
             raise Exception, 'No filename specified for project'
 
+        emitted_schematics = False
+        emitted_output_name = False
+
         fp = open(destfile, 'wb')
-        fp.write('schematics %s\n' % ' '.join(self.pages))
-        fp.write('output-name %s\n' % self.output_name)
+        for line in self.lines:
+            parts = line.strip().split(None, 1)
+            opt = parts[0]
+            if opt == 'schematics':
+                fp.write('schematics %s\n' % ' '.join(self.pages))
+                emitted_schematics = True
+            elif opt == 'output-name':
+                fp.write('output-name %s\n' % self.output_name)
+                emitted_output_name = True
+            else:
+                fp.write(line)
+
+        if not emitted_schematics:
+            fp.write('schematics %s\n' % ' '.join(self.pages))
+        if not emitted_output_name:
+            fp.write('output-name %s\n' % self.output_name)
+
         fp.close()
         if destfile == self.filename:
             self.set_dirty(False)
