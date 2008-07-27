@@ -87,6 +87,8 @@ class MonitorWindow(gtk.Window):
         
         # Treeview showing available schematic pages
         self.pagelist = gtk.TreeView(gtk.ListStore(str))
+        self.pagelist.connect('row-activated',
+                              self.event_pagelist_row_activated)
         scrollwin.add_with_viewport(self.pagelist)
         column = gtk.TreeViewColumn(None, gtk.CellRendererText(), text=0)
         self.pagelist.append_column(column)
@@ -272,6 +274,11 @@ class MonitorWindow(gtk.Window):
                 break
             iter = model.iter_next(iter)
         self.set_pcbsensitivities()
+
+    def event_pagelist_row_activated(self, treeview, path, view_column):
+        # Prod the "Open schematic" button if it is sensitive
+        if self.editpagebutton.get_property("sensitive"):
+            self.editpagebutton.clicked()
 
     def event_pagelist_selection_changed(self, selection):
         page_selected = selection.count_selected_rows()
