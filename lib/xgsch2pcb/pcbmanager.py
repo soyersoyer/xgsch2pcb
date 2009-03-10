@@ -126,7 +126,7 @@ class PCBManager( gobject.GObject ):
     
                 if filename == os.path.abspath( self.output_name ) + ".pcb":
                     found_our_file = True
-                    continue
+                    break
         
         if not found_our_file: 
             return False
