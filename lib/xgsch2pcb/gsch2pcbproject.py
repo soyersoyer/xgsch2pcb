@@ -71,7 +71,10 @@ class Gsch2PCBProject(gobject.GObject):
         for line in fp:
             self.lines.append(line)
             parts = line.strip().split(None, 1)
-            opt = parts[0]
+
+            opt = None
+            if parts:
+                opt = parts[0]
 
             # Skip blank lines and comment lines (like gsch2pcb)
             if not opt or opt[0] == '#' or opt[0] == '/' or opt[0] == ';':
@@ -103,7 +106,10 @@ class Gsch2PCBProject(gobject.GObject):
         fp = open(destfile, 'wb')
         for line in self.lines:
             parts = line.strip().split(None, 1)
-            opt = parts[0]
+            opt = None
+            if parts:
+                opt = parts[0]
+
             if opt == 'schematics':
                 fp.write('schematics %s\n' % ' '.join(self.pages))
                 emitted_schematics = True
