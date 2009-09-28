@@ -22,7 +22,7 @@
 
 
 AC_PREREQ(2.59)
-AC_INIT([geda-xgsch2pcb], [0.1.2], BUG-REPORT-ADDRESS)
+AC_INIT([geda-xgsch2pcb], [0.1.3], BUG-REPORT-ADDRESS)
 
 AM_INIT_AUTOMAKE([foreign])
 
