@@ -1,16 +1,16 @@
-# translation of de_DE.po to deutsch
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# French translation for geda
+# Copyright (c) 2008 Rosetta Contributors and Canonical Ltd 2008
+# This file is distributed under the same license as the geda package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2008.
 #
-# Werner Hoch <werner.ho@gmx.de>, 2008.
 msgid ""
 msgstr ""
-"Project-Id-Version: de_DE\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-09-28 19:26+0100\n"
-"PO-Revision-Date: 2008-01-16 05:28+0000\n"
-"Last-Translator: Werner Hoch <werner.ho@gmx.de>\n"
-"Language-Team: deutsch <de@li.org>\n"
+"Project-Id-Version: geda\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2009-01-25 00:44+0000\n"
+"PO-Revision-Date: 2009-08-21 19:52+0000\n"
+"Last-Translator: Iznogood <Unknown>\n"
+"Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -21,30 +21,30 @@ msgstr ""
 #. --------------------
 #: ../lib/xgsch2pcb/gui.py:75
 msgid "Schematic pages"
-msgstr "Schaltpläne"
+msgstr "Schémas"
 
 #. Buttons to run gschem/gattrib
 #: ../lib/xgsch2pcb/gui.py:117
 msgid "Edit schematic"
-msgstr "Schaltplan editieren"
+msgstr "Editer le schéma"
 
 #: ../lib/xgsch2pcb/gui.py:129
 msgid "Edit attributes"
-msgstr "Attribute editieren"
+msgstr "Editer les attributs"
 
 #. Layout editing widgets
 #. ----------------------
 #: ../lib/xgsch2pcb/gui.py:144
 msgid "Layout"
-msgstr "Layout"
+msgstr "Circuit imprimé"
 
 #: ../lib/xgsch2pcb/gui.py:156
 msgid "Edit layout"
-msgstr "Layout editieren"
+msgstr "Routage de la carte"
 
 #: ../lib/xgsch2pcb/gui.py:161 ../lib/xgsch2pcb/gui.py:436
 msgid "Update layout"
-msgstr "Layout aktualisieren"
+msgstr "Synchronisation Schéma -> Carte"
 
 #: ../lib/xgsch2pcb/gui.py:183
 msgid "xgsch2pcb"
@@ -52,23 +52,22 @@ msgstr "xgsch2pcb"
 
 #: ../lib/xgsch2pcb/gui.py:184
 msgid "a GUI for gsch2pcb"
-msgstr "Benutzeroberfläche für gsch2pcb"
+msgstr "Une Interface Graphique pour gsch2pcb"
 
 #: ../lib/xgsch2pcb/gui.py:190
 msgid "translator-credits"
 msgstr ""
-"Werner Hoch\n"
-"\n"
 "Launchpad Contributions:\n"
-"  Werner Hoch https://launchpad.net/~werner-ho"
+"  Iznogood https://launchpad.net/~iznogood\n"
+"  Joel Silvestre https://launchpad.net/~j-silvestre"
 
 #: ../lib/xgsch2pcb/gui.py:310
 msgid ""
 "You must select either an existing schematic file or enter a filename for a "
 "new file."
 msgstr ""
-"Es muss entweder eine bestehende Schaltplandatei oder ein Dateiname für eine "
-"neue Datei ausgewählt werden."
+"Vous devez sélectionner soit un fichier schéma existant soit saisir un nom "
+"de fichier pour un nouveau fichier."
 
 #: ../lib/xgsch2pcb/gui.py:325
 msgid ""
@@ -79,17 +78,16 @@ msgid ""
 "Projects are best kept in self contained directories. Ensure that you don't "
 "move or delete any external files, or the project will be incomplete."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Die ausgewählte Datei ist außerhalb "
-"des aktuellen Projektverzeichnisses.\n"
-"Trotzdem hinzufügen?</span>\n"
+"<span weight=\"bold\" size=\"larger\">Le fichier sélectionné n'est pas dans "
+"le répértoire du projet.\n"
+"L'ajouter malgré tout?</span>\n"
 "\n"
-"Projekte werden am Besten innerhalb eines Verzeichnisses verwaltet. Es muss "
-"sichergestellt werden, dass keine externen Dateien verschoben oder gelöscht "
-"werden. Das Projekt wäre ansonsten unvollständig."
+"Il est préferable de garder tous les fichiers du projet dans un répertoire "
+"unique."
 
 #: ../lib/xgsch2pcb/gui.py:334
 msgid "_Add anyway"
-msgstr "_Weitermachen"
+msgstr "_Ajoute malgré tout"
 
 #: ../lib/xgsch2pcb/gui.py:360
 #, python-format
@@ -98,21 +96,20 @@ msgid ""
 "\n"
 "Error %i: %s"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Schaltplan konnte nicht erstellt "
-"werden</span>\n"
+"<span weight=\"bold\" size=\"larger\">Impossible de créer le schéma</span>\n"
 "\n"
-"Fehler %i: %s"
+"Erreur %i: %s"
 
 #: ../lib/xgsch2pcb/gui.py:373
-msgid "<span weight=\"bold\" size=\"larger\">Could not create schematic</span>"
+msgid ""
+"<span weight=\"bold\" size=\"larger\">Could not create schematic</span>"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Schaltplan konnte nicht erstellt "
-"werden</span>"
+"<span weight=\"bold\" size=\"larger\">Impossible de créer le schéma</span>"
 
 #: ../lib/xgsch2pcb/gui.py:415
 #, python-format
 msgid "Could not locate tool: %s"
-msgstr "Programm wurde nicht gefunden: %s"
+msgstr "Outil introuvable: %s"
 
 #: ../lib/xgsch2pcb/gui.py:434
 msgid ""
@@ -120,37 +117,37 @@ msgid ""
 "\n"
 "Would you like to update your PCB layout?"
 msgstr ""
-"Der Schaltplan hat sich geändert.\n"
+"Le schéma à été modifié.\n"
 "\n"
-"Soll das PCB Layout aktualisiert werden?"
+"Souhaitez vous synchroniser le circuit imprimé?"
 
 #: ../lib/xgsch2pcb/gui.py:435
 msgid "Leave layout unchanged"
-msgstr "Layout nicht ändern"
+msgstr "Ignore les modifications de la carte"
 
 #: ../lib/xgsch2pcb/gui.py:474
 msgid "creating a new project"
-msgstr "Neues Projekt anlegen"
+msgstr "creation d'un nouveau projet"
 
 #: ../lib/xgsch2pcb/gui.py:484
 msgid "opening a new project"
-msgstr "Neues Projekt öffnen"
+msgstr "ouverture d'un nouveau projet"
 
 #: ../lib/xgsch2pcb/gui.py:493
 msgid "Open Project..."
-msgstr "Projekt öffnen..."
+msgstr "Ouverture du Projet..."
 
 #: ../lib/xgsch2pcb/gui.py:526
 msgid "closing the project"
-msgstr "Projekt schließen"
+msgstr "fermeture du projet"
 
 #: ../lib/xgsch2pcb/gui.py:551
 msgid " [modified]"
-msgstr " [geändert]"
+msgstr " [modifié]"
 
 #: ../lib/xgsch2pcb/gui.py:599
 msgid "exiting"
-msgstr "beenden"
+msgstr "Quitte"
 
 #: ../lib/xgsch2pcb/gui.py:639
 #, python-format
@@ -158,7 +155,7 @@ msgid ""
 "<span weight=\"bold\" size=\"larger\">Problem initialising</span>\n"
 "%s"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Initialisierungsproblem</span>\n"
+"<span weight=\"bold\" size=\"larger\">Problème à l'initialisation de</span>\n"
 "%s"
 
 #: ../lib/xgsch2pcb/gui.py:676 ../lib/xgsch2pcb/gui.py:706
@@ -168,10 +165,10 @@ msgid ""
 "\n"
 "Close the layout editor before %s."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Das Layoutprogramm ist noch geöffnet</"
-"span>\n"
+"<span weight=\"bold\" size=\"larger\">L'éditeur de routage est encore actif "
+"</span>\n"
 "\n"
-"Das Layoutprogramm sollte vorher geschlossen werden [%s]."
+"Fermez le avant %s."
 
 #: ../lib/xgsch2pcb/gui.py:679 ../lib/xgsch2pcb/gui.py:709
 msgid ""
@@ -179,10 +176,10 @@ msgid ""
 "\n"
 "Close the layout editor first."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Das Layoutprogramm ist noch geöffnet</"
-"span>\n"
+"<span weight=\"bold\" size=\"larger\">L'éditeur de routage est encore actif "
+"</span>\n"
 "\n"
-"Das Layoutprogramm muss zuerst geschlossen werden."
+"Fermez le d'abord."
 
 #: ../lib/xgsch2pcb/gui.py:734
 #, python-format
@@ -192,51 +189,52 @@ msgid ""
 "\n"
 "Any changes made since the last save will be lost."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Änderungen im Projekt \"%s\" vor dem "
-"Schließen speichern?</span>\n"
+"<span weight=\"bold\" size=\"larger\">Enregistrer les modifications \"%s\" "
+"avant de quitter?</span>\n"
 "\n"
-"Alle Änderungen seit dem letzten Speichern gehen sonst verloren."
+"Tous les modifications effectuées depuis le dernier enregistrement seront "
+"perdues."
 
 #: ../lib/xgsch2pcb/gui.py:739
 msgid "Close _without Saving"
-msgstr "Schließen _ohne Speichern"
+msgstr "Fermer _sans enregistrer"
 
 #: ../lib/xgsch2pcb/gui.py:766
 msgid "Elements missing from layout"
-msgstr "Fehlende Elemente im Layout"
+msgstr "Composants absents du circuit imprimé"
 
 #: ../lib/xgsch2pcb/gui.py:767
 msgid ""
 "The footprints for the following elements were not found.\n"
 "Please check the 'footprint' attribute for these elements:\n"
 msgstr ""
-"Die Footprints der folgenden Elemente wurden nicht gefunden.\n"
-"Die 'footprint' Attribute dieser Elemente sollten kontrolliert werden:\n"
+"L'empreinte des composants suivants n'a pas été trouvée.\n"
+"Veuillez vérifier l'attribut 'footprint' de ces composants:\n"
 
 #: ../lib/xgsch2pcb/gui.py:795
 msgid "Add schematic page..."
-msgstr "Schalplandatei hinzufügen..."
+msgstr "Ajouter un schéma..."
 
 #. Two radio buttons allow you to select whether to use an
 #. existing file or create a new file
 #: ../lib/xgsch2pcb/gui.py:818
 msgid "From file:"
-msgstr "Aus Datei:"
+msgstr "Depuis le fichier:"
 
 #: ../lib/xgsch2pcb/gui.py:828
 msgid "Create new:"
-msgstr "Neue Datei:"
+msgstr "Créer un nouveau:"
 
 #. File chooser button to select and existing file.  Currently
 #. limited to local files 'cos gsch2pcb can't handle remote
 #. files.
 #: ../lib/xgsch2pcb/gui.py:841
 msgid "Select schematic page..."
-msgstr "Schaltplandatei auswählen..."
+msgstr "Selectionner un schéma..."
 
 #: ../lib/xgsch2pcb/gui.py:908
 msgid "New project..."
-msgstr "Neues Projekt..."
+msgstr "Nouveau projet..."
 
 #: ../lib/xgsch2pcb/gui.py:941
 #, python-format
@@ -247,15 +245,15 @@ msgid ""
 "The project already exists in directory \"%s\". Replacing it will overwrite "
 "its contents."
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Ein Projekt mit der Bezeichnung \"%s\" "
-"existiert bereits.Soll es ersetzt werden?</span>\n"
+"<span weight=\"bold\" size=\"larger\">Un projet nommé \"%s\" existe déja. "
+"Désirez vous le remplacer?</span>\n"
 "\n"
-"Das Projekt existiert bereits in dem Verzeichnis \"%s\". Das Ersetzen wird "
-"den Inhalt des Projektes überschreiben."
+"Le projet existe déja dans le dossier \"%s\". Le remplacer ecrasera son "
+"contenu."
 
 #: ../lib/xgsch2pcb/gui.py:951
 msgid "_Replace"
-msgstr "_Ersetzen"
+msgstr "_Remplacer"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:69
 #, python-format
@@ -264,72 +262,70 @@ msgid ""
 "\n"
 "Error %i: %s"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Das Projekt konnte nicht erstellt "
-"werden</span>\n"
+"<span weight=\"bold\" size=\"larger\">Impossible de créér le projet</span>\n"
 "\n"
-"Fehler %i: %s"
+"Erreur %i: %s"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:81
 msgid "<span weight=\"bold\" size=\"larger\">Could not create project</span>"
 msgstr ""
-"<span weight=\"bold\" size=\"larger\">Das Projekt konnte nicht erstellt "
-"werden</span>"
+"<span weight=\"bold\" size=\"larger\">Impossible de créer le projet</span>"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:150
 msgid "<b>Choose project template</b>"
-msgstr "<b>Projektvorlage auswählen</b>"
+msgstr "<b>Choisissez un modèle de projet</b>"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:161
 msgid "Blank"
-msgstr "Leer"
+msgstr "Vierge"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:163
 msgid "From template:"
-msgstr "Aus Vorlage:"
+msgstr "A partir du modèle:"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:174
 msgid "(No templates found)"
-msgstr "(keine Vorlagen gefunden)"
+msgstr "(Pas de modèles trouvés)"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:204
 #: ../lib/xgsch2pcb/new_project_gui.py:263
 #: ../lib/xgsch2pcb/new_project_gui.py:335
 msgid "Create new project"
-msgstr "Neues Projekt erstellen"
+msgstr "Créer un nouveau projet"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:225
 msgid "<b>Choose project filename</b>"
-msgstr "<b>Dateiname des Projekts wählen</b>"
+msgstr "<b>Choisissez un nom pour le projet</b>"
 
 #. TODO: Remove magic numbers
 #. TODO: Remove magic numbers
 #: ../lib/xgsch2pcb/new_project_gui.py:240
 msgid "Project name:"
-msgstr "Projekt name:"
+msgstr "Nom du projet:"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:245
 msgid "Location:"
-msgstr "Ablage:"
+msgstr "Emplacement:"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:253
 msgid "Select project location..."
-msgstr "Projektablage auswählen..."
+msgstr "Selectionnez l'emplacement du projet"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:282
 msgid "<b>Project summary</b>"
-msgstr "<b>Projektübersicht</b>"
+msgstr "<b>Résumé du Projet</b>"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:294
 msgid "<b>New files to be created:</b>"
-msgstr "<b>Folgende Dateien werden erzeugt:</b>"
+msgstr "<b>Nouveaux fichiers à créer:</b>"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:308
 msgid "<b>The following files would be overwritten:</b>"
-msgstr "<b>Die folgenden Dateien werden überschrieben:</b>"
+msgstr "<b>Les fichiers suivants serait écrasés:</b>"
 
 #: ../lib/xgsch2pcb/new_project_gui.py:325
 msgid "Confirm overwrite"
-msgstr "Überschreiben bestätigen"
+msgstr "Confirmez l'écrasement"
 
 #: ../lib/xgsch2pcb/pcbmanager.py:72
 msgid ""
@@ -337,7 +333,7 @@ msgid ""
 "Couldn't find 'pcb' executable"
 msgstr ""
 "\n"
-"Das 'pcb' Programm wurde nicht gefunden"
+"L'exécutable 'pcb' est introuvable"
 
 #: ../lib/xgsch2pcb/pcbmanager.py:75
 msgid ""
@@ -345,20 +341,20 @@ msgid ""
 "Couldn't find 'gsch2pcb' executable"
 msgstr ""
 "\n"
-"Das 'gsch2pcb' Programm wurde nicht gefunden"
+"L'exécutable 'gsch2pcb' est introuvable"
 
 #: ../lib/xgsch2pcb/pcbmanager.py:213
 msgid "********START UPDATING********"
-msgstr "********AKTUALISIERUNG GESTARTET********"
+msgstr "******** SYNCHRONISATION EN COURS ********"
 
 #: ../lib/xgsch2pcb/pcbmanager.py:313
 msgid "********DONE UPDATING********"
-msgstr "********AKTUALISIERUNG ABGESCHLOSSEN********"
+msgstr "******** SYNCHRONISATION EFFECTUE ********"
 
 #: ../data/geda-xgsch2pcb.desktop.in.h:1
 msgid "Create and edit electronics projects with xgsch2pcb"
-msgstr "Elektonikprojekte erstellen und bearbeiten mit xgsch2pcb"
+msgstr "Créez et éditez des projets électroniques avec xgsch2pcb"
 
 #: ../data/geda-xgsch2pcb.desktop.in.h:2
 msgid "gEDA Schematic -> PCB Project"
-msgstr "gEDA Schaltplan --> PCB Projekt"
+msgstr "gEDA Schematique -> PCB Projet"

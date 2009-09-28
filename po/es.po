@@ -2,20 +2,22 @@
 # Copyright (C) 2007, 2008 Peter Brett, Peter Clifton and the respective original authors (which are listed on the respective files).
 # This file is distributed under the same license as xgsch2pcb package.
 # Carlos Nieves Ónega <cnieves@iespana.es>, 2008.
-# 
-# 
+#
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: xgsch2pcb VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-09 15:53+0000\n"
-"PO-Revision-Date: 2008-01-07 20:09+0100\n"
-"Last-Translator: Carlos Nieves Ónega <cnieves@iespana.es>\n"
+"POT-Creation-Date: 2009-09-28 19:26+0100\n"
+"PO-Revision-Date: 2008-01-16 05:27+0000\n"
+"Last-Translator: Carlos Nieves Ónega <Unknown>\n"
 "Language-Team: Spanish/SpainReport-Msgid-Bugs-To: Plural-Forms: nplurals=2; "
 "plural=(n == 1)X-Generator: KBabel 1.0.2>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2009-09-28 18:16+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
 
 #. Page editing widgets
 #. --------------------
@@ -24,41 +26,45 @@ msgid "Schematic pages"
 msgstr "Páginas del esquema"
 
 #. Buttons to run gschem/gattrib
-#: ../lib/xgsch2pcb/gui.py:115
+#: ../lib/xgsch2pcb/gui.py:117
 msgid "Edit schematic"
 msgstr "Modificar esquema"
 
-#: ../lib/xgsch2pcb/gui.py:127
+#: ../lib/xgsch2pcb/gui.py:129
 msgid "Edit attributes"
 msgstr "Modificar propiedades"
 
 #. Layout editing widgets
 #. ----------------------
-#: ../lib/xgsch2pcb/gui.py:142
+#: ../lib/xgsch2pcb/gui.py:144
 msgid "Layout"
 msgstr "Diseño de PCB"
 
-#: ../lib/xgsch2pcb/gui.py:154
+#: ../lib/xgsch2pcb/gui.py:156
 msgid "Edit layout"
 msgstr "Modificar diseño de PCB"
 
-#: ../lib/xgsch2pcb/gui.py:159 ../lib/xgsch2pcb/gui.py:429
+#: ../lib/xgsch2pcb/gui.py:161 ../lib/xgsch2pcb/gui.py:436
 msgid "Update layout"
 msgstr "Actualizar diseño de PCB"
 
-#: ../lib/xgsch2pcb/gui.py:181
+#: ../lib/xgsch2pcb/gui.py:183
 msgid "xgsch2pcb"
 msgstr "xgsch2pcb"
 
-#: ../lib/xgsch2pcb/gui.py:182
+#: ../lib/xgsch2pcb/gui.py:184
 msgid "a GUI for gsch2pcb"
 msgstr "un entorno gráfico para gsch2pcb"
 
-#: ../lib/xgsch2pcb/gui.py:188
+#: ../lib/xgsch2pcb/gui.py:190
 msgid "translator-credits"
-msgstr "Carlos Nieves Ónega"
+msgstr ""
+"Carlos Nieves Ónega\n"
+"\n"
+"Launchpad Contributions:\n"
+"  Carlos Nieves Ónega https://launchpad.net/~cnieves-iespana"
 
-#: ../lib/xgsch2pcb/gui.py:303
+#: ../lib/xgsch2pcb/gui.py:310
 msgid ""
 "You must select either an existing schematic file or enter a filename for a "
 "new file."
@@ -66,7 +72,7 @@ msgstr ""
 "Debe seleccionar un archivo de esquema existente o introducir el nombre de "
 "un archivo nuevo."
 
-#: ../lib/xgsch2pcb/gui.py:318
+#: ../lib/xgsch2pcb/gui.py:325
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Selected file is outside the project "
 "directory\n"
@@ -82,11 +88,11 @@ msgstr ""
 "Es mejor guardar cada proyecto en una carpeta diferente. Asegúrese de que no "
 "mueve o borra ningún archivo externo, o el proyecto estará incompleto."
 
-#: ../lib/xgsch2pcb/gui.py:327
+#: ../lib/xgsch2pcb/gui.py:334
 msgid "_Add anyway"
 msgstr "_Añadir de todas formas"
 
-#: ../lib/xgsch2pcb/gui.py:353
+#: ../lib/xgsch2pcb/gui.py:360
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Could not create schematic</span>\n"
@@ -98,17 +104,17 @@ msgstr ""
 "\n"
 "Error %i: %s"
 
-#: ../lib/xgsch2pcb/gui.py:366
+#: ../lib/xgsch2pcb/gui.py:373
 msgid "<span weight=\"bold\" size=\"larger\">Could not create schematic</span>"
 msgstr ""
 "<span weight=\"bold\" size=\"larger\">No se ha podido crear el esquema/span>"
 
-#: ../lib/xgsch2pcb/gui.py:408
+#: ../lib/xgsch2pcb/gui.py:415
 #, python-format
 msgid "Could not locate tool: %s"
 msgstr "No se ha podido encontrar la herramienta: %s"
 
-#: ../lib/xgsch2pcb/gui.py:427
+#: ../lib/xgsch2pcb/gui.py:434
 msgid ""
 "Your schematic has changed.\n"
 "\n"
@@ -118,35 +124,35 @@ msgstr ""
 "\n"
 "¿Quiere actualizar su diseño de PCB?"
 
-#: ../lib/xgsch2pcb/gui.py:428
+#: ../lib/xgsch2pcb/gui.py:435
 msgid "Leave layout unchanged"
 msgstr "No modificar el diseño de PCB"
 
-#: ../lib/xgsch2pcb/gui.py:467
+#: ../lib/xgsch2pcb/gui.py:474
 msgid "creating a new project"
 msgstr "creando un nuevo proyecto"
 
-#: ../lib/xgsch2pcb/gui.py:477
+#: ../lib/xgsch2pcb/gui.py:484
 msgid "opening a new project"
 msgstr "abriendo un nuevo proyecto"
 
-#: ../lib/xgsch2pcb/gui.py:486
+#: ../lib/xgsch2pcb/gui.py:493
 msgid "Open Project..."
 msgstr "Abrir Proyecto..."
 
-#: ../lib/xgsch2pcb/gui.py:519
+#: ../lib/xgsch2pcb/gui.py:526
 msgid "closing the project"
 msgstr "cerrando proyecto"
 
-#: ../lib/xgsch2pcb/gui.py:544
+#: ../lib/xgsch2pcb/gui.py:551
 msgid " [modified]"
 msgstr " [modificado]"
 
-#: ../lib/xgsch2pcb/gui.py:592
+#: ../lib/xgsch2pcb/gui.py:599
 msgid "exiting"
 msgstr "saliendo"
 
-#: ../lib/xgsch2pcb/gui.py:632
+#: ../lib/xgsch2pcb/gui.py:639
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Problem initialising</span>\n"
@@ -155,7 +161,7 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">Problema en la inicialización</span>\n"
 "%s"
 
-#: ../lib/xgsch2pcb/gui.py:669 ../lib/xgsch2pcb/gui.py:699
+#: ../lib/xgsch2pcb/gui.py:676 ../lib/xgsch2pcb/gui.py:706
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
@@ -167,7 +173,7 @@ msgstr ""
 "\n"
 "Cierre su editor de PCB antes de %s."
 
-#: ../lib/xgsch2pcb/gui.py:672 ../lib/xgsch2pcb/gui.py:702
+#: ../lib/xgsch2pcb/gui.py:679 ../lib/xgsch2pcb/gui.py:709
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
 "\n"
@@ -178,7 +184,7 @@ msgstr ""
 "\n"
 "Cierre su editor de PCB primero."
 
-#: ../lib/xgsch2pcb/gui.py:727
+#: ../lib/xgsch2pcb/gui.py:734
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Save the changes to project \"%s\" "
@@ -191,15 +197,15 @@ msgstr ""
 "\n"
 "Se perdería cualquier cambio realizado desde la última vez que lo guardó."
 
-#: ../lib/xgsch2pcb/gui.py:732
+#: ../lib/xgsch2pcb/gui.py:739
 msgid "Close _without Saving"
 msgstr "Cerrar _sin guardar"
 
-#: ../lib/xgsch2pcb/gui.py:759
+#: ../lib/xgsch2pcb/gui.py:766
 msgid "Elements missing from layout"
 msgstr "Elementos existentes en el esquema pero no en el PCB."
 
-#: ../lib/xgsch2pcb/gui.py:760
+#: ../lib/xgsch2pcb/gui.py:767
 msgid ""
 "The footprints for the following elements were not found.\n"
 "Please check the 'footprint' attribute for these elements:\n"
@@ -207,32 +213,32 @@ msgstr ""
 "No se encontraron las huellas de los siguientes componentes.\n"
 "Por favor, compruebe la propiedad 'footprint' de estos componentes.\n"
 
-#: ../lib/xgsch2pcb/gui.py:788
+#: ../lib/xgsch2pcb/gui.py:795
 msgid "Add schematic page..."
 msgstr "Añadir página de esquema..."
 
 #. Two radio buttons allow you to select whether to use an
 #. existing file or create a new file
-#: ../lib/xgsch2pcb/gui.py:811
+#: ../lib/xgsch2pcb/gui.py:818
 msgid "From file:"
 msgstr "Desde el archivo:"
 
-#: ../lib/xgsch2pcb/gui.py:821
+#: ../lib/xgsch2pcb/gui.py:828
 msgid "Create new:"
 msgstr "Crear nuevo:"
 
 #. File chooser button to select and existing file.  Currently
 #. limited to local files 'cos gsch2pcb can't handle remote
 #. files.
-#: ../lib/xgsch2pcb/gui.py:834
+#: ../lib/xgsch2pcb/gui.py:841
 msgid "Select schematic page..."
 msgstr "Seleccionar página de esquema..."
 
-#: ../lib/xgsch2pcb/gui.py:901
+#: ../lib/xgsch2pcb/gui.py:908
 msgid "New project..."
 msgstr "Nuevo proyecto..."
 
-#: ../lib/xgsch2pcb/gui.py:934
+#: ../lib/xgsch2pcb/gui.py:941
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">A project named \"%s\" already exists. "
@@ -247,7 +253,7 @@ msgstr ""
 "El proyecto ya existe en la carpeta \"%s\". Si lo reemplaza sobreescribirá "
 "todo su contenido."
 
-#: ../lib/xgsch2pcb/gui.py:944
+#: ../lib/xgsch2pcb/gui.py:951
 msgid "_Replace"
 msgstr "_Reemplazar"
 

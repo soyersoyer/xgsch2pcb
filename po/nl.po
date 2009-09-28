@@ -7,15 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: xgsch2pcb\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-01-09 15:53+0000\n"
-"PO-Revision-Date: 2007-12-26 20:31+0100\n"
-"Last-Translator: Bert Timmerman <bert.timmerman@xs4all.nl>\n"
+"POT-Creation-Date: 2009-09-28 19:26+0100\n"
+"PO-Revision-Date: 2008-01-16 05:28+0000\n"
+"Last-Translator: lambert63 <bert.timmerman@xs4all.nl>\n"
 "Language-Team: gEDA developers <geda-dev@moira.seul.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Dutch\n"
+"X-Launchpad-Export-Date: 2009-09-28 18:16+0000\n"
+"X-Generator: Launchpad (build Unknown)\n"
 "X-Poedit-Country: NETHERLANDS\n"
+"X-Poedit-Language: Dutch\n"
 
 # Bladzijde bewerkende widgets
 # ----------------------------
@@ -27,11 +29,11 @@ msgstr "Schema bladzijden"
 
 # Knoppen om gschem/gattrib uit te voeren
 #. Buttons to run gschem/gattrib
-#: ../lib/xgsch2pcb/gui.py:115
+#: ../lib/xgsch2pcb/gui.py:117
 msgid "Edit schematic"
 msgstr "Bewerk schema"
 
-#: ../lib/xgsch2pcb/gui.py:127
+#: ../lib/xgsch2pcb/gui.py:129
 msgid "Edit attributes"
 msgstr "Bewerk attributen"
 
@@ -39,31 +41,35 @@ msgstr "Bewerk attributen"
 # ------------------------
 #. Layout editing widgets
 #. ----------------------
-#: ../lib/xgsch2pcb/gui.py:142
+#: ../lib/xgsch2pcb/gui.py:144
 msgid "Layout"
 msgstr "Opmaak"
 
-#: ../lib/xgsch2pcb/gui.py:154
+#: ../lib/xgsch2pcb/gui.py:156
 msgid "Edit layout"
 msgstr "Bewerk opmaak"
 
-#: ../lib/xgsch2pcb/gui.py:159 ../lib/xgsch2pcb/gui.py:429
+#: ../lib/xgsch2pcb/gui.py:161 ../lib/xgsch2pcb/gui.py:436
 msgid "Update layout"
 msgstr "Hernieuw opmaak"
 
-#: ../lib/xgsch2pcb/gui.py:181
+#: ../lib/xgsch2pcb/gui.py:183
 msgid "xgsch2pcb"
 msgstr "xgsch2pcb"
 
-#: ../lib/xgsch2pcb/gui.py:182
+#: ../lib/xgsch2pcb/gui.py:184
 msgid "a GUI for gsch2pcb"
 msgstr "een GUI voor gsch2pcb"
 
-#: ../lib/xgsch2pcb/gui.py:188
+#: ../lib/xgsch2pcb/gui.py:190
 msgid "translator-credits"
-msgstr "Bert Timmerman"
+msgstr ""
+"Bert Timmerman\n"
+"\n"
+"Launchpad Contributions:\n"
+"  lambert63 https://launchpad.net/~bert-timmerman"
 
-#: ../lib/xgsch2pcb/gui.py:303
+#: ../lib/xgsch2pcb/gui.py:310
 msgid ""
 "You must select either an existing schematic file or enter a filename for a "
 "new file."
@@ -71,7 +77,7 @@ msgstr ""
 "Selecteer een bestaand schema bestand of voer de bestandsnaam voor een nieuw "
 "bestand in."
 
-#: ../lib/xgsch2pcb/gui.py:318
+#: ../lib/xgsch2pcb/gui.py:325
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Selected file is outside the project "
 "directory\n"
@@ -88,11 +94,11 @@ msgstr ""
 "je externe bestanden verwijderd of verplaatst, het project wordt dan "
 "incompleet."
 
-#: ../lib/xgsch2pcb/gui.py:327
+#: ../lib/xgsch2pcb/gui.py:334
 msgid "_Add anyway"
 msgstr "Toch Toevoegen"
 
-#: ../lib/xgsch2pcb/gui.py:353
+#: ../lib/xgsch2pcb/gui.py:360
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Could not create schematic</span>\n"
@@ -103,16 +109,16 @@ msgstr ""
 "\n"
 "Fout %i: %s"
 
-#: ../lib/xgsch2pcb/gui.py:366
+#: ../lib/xgsch2pcb/gui.py:373
 msgid "<span weight=\"bold\" size=\"larger\">Could not create schematic</span>"
 msgstr "<span weight=\"bold\" size=\"larger\">Kan geen schema maken</span>"
 
-#: ../lib/xgsch2pcb/gui.py:408
+#: ../lib/xgsch2pcb/gui.py:415
 #, python-format
 msgid "Could not locate tool: %s"
 msgstr "Kan gereedschap niet vinden: %s"
 
-#: ../lib/xgsch2pcb/gui.py:427
+#: ../lib/xgsch2pcb/gui.py:434
 msgid ""
 "Your schematic has changed.\n"
 "\n"
@@ -122,35 +128,35 @@ msgstr ""
 "\n"
 "Wil je de PCB opmaak hernieuwen ?"
 
-#: ../lib/xgsch2pcb/gui.py:428
+#: ../lib/xgsch2pcb/gui.py:435
 msgid "Leave layout unchanged"
 msgstr "Laat de opmaak ongewijzigd"
 
-#: ../lib/xgsch2pcb/gui.py:467
+#: ../lib/xgsch2pcb/gui.py:474
 msgid "creating a new project"
 msgstr "maak een nieuw project"
 
-#: ../lib/xgsch2pcb/gui.py:477
+#: ../lib/xgsch2pcb/gui.py:484
 msgid "opening a new project"
 msgstr "open een nieuw project"
 
-#: ../lib/xgsch2pcb/gui.py:486
+#: ../lib/xgsch2pcb/gui.py:493
 msgid "Open Project..."
 msgstr "Open Project..."
 
-#: ../lib/xgsch2pcb/gui.py:519
+#: ../lib/xgsch2pcb/gui.py:526
 msgid "closing the project"
 msgstr "sluit het project"
 
-#: ../lib/xgsch2pcb/gui.py:544
+#: ../lib/xgsch2pcb/gui.py:551
 msgid " [modified]"
 msgstr " [veranderd]"
 
-#: ../lib/xgsch2pcb/gui.py:592
+#: ../lib/xgsch2pcb/gui.py:599
 msgid "exiting"
 msgstr "beeindigen"
 
-#: ../lib/xgsch2pcb/gui.py:632
+#: ../lib/xgsch2pcb/gui.py:639
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Problem initialising</span>\n"
@@ -159,7 +165,7 @@ msgstr ""
 "<span weight=\"bold\" size=\"larger\">Probleem tijdens initialiseren</span>\n"
 "%s"
 
-#: ../lib/xgsch2pcb/gui.py:669 ../lib/xgsch2pcb/gui.py:699
+#: ../lib/xgsch2pcb/gui.py:676 ../lib/xgsch2pcb/gui.py:706
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
@@ -171,7 +177,7 @@ msgstr ""
 "\n"
 "Sluit de opmaak bewerking voordat %s."
 
-#: ../lib/xgsch2pcb/gui.py:672 ../lib/xgsch2pcb/gui.py:702
+#: ../lib/xgsch2pcb/gui.py:679 ../lib/xgsch2pcb/gui.py:709
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Layout editor still open</span>\n"
 "\n"
@@ -182,7 +188,7 @@ msgstr ""
 "\n"
 "Sluit eerst de opmaak bewerking."
 
-#: ../lib/xgsch2pcb/gui.py:727
+#: ../lib/xgsch2pcb/gui.py:734
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">Save the changes to project \"%s\" "
@@ -195,15 +201,15 @@ msgstr ""
 "\n"
 "Elke wijziging sinds de laatste keer opslaan zullen verloren gaan."
 
-#: ../lib/xgsch2pcb/gui.py:732
+#: ../lib/xgsch2pcb/gui.py:739
 msgid "Close _without Saving"
 msgstr "Afsluiten zonder Opslaan"
 
-#: ../lib/xgsch2pcb/gui.py:759
+#: ../lib/xgsch2pcb/gui.py:766
 msgid "Elements missing from layout"
 msgstr "Ontbrekende elementen van opmaak"
 
-#: ../lib/xgsch2pcb/gui.py:760
+#: ../lib/xgsch2pcb/gui.py:767
 msgid ""
 "The footprints for the following elements were not found.\n"
 "Please check the 'footprint' attribute for these elements:\n"
@@ -211,7 +217,7 @@ msgstr ""
 "De patronen voor de volgende elementen werden niet gevonden.\n"
 "Controleer alstublieft de 'footprint' attribuut van deze elementen:\n"
 
-#: ../lib/xgsch2pcb/gui.py:788
+#: ../lib/xgsch2pcb/gui.py:795
 msgid "Add schematic page..."
 msgstr "Voeg schema pagina toe..."
 
@@ -219,11 +225,11 @@ msgstr "Voeg schema pagina toe..."
 # danwel een nieuw bestand te creeren
 #. Two radio buttons allow you to select whether to use an
 #. existing file or create a new file
-#: ../lib/xgsch2pcb/gui.py:811
+#: ../lib/xgsch2pcb/gui.py:818
 msgid "From file:"
 msgstr "Van bestand:"
 
-#: ../lib/xgsch2pcb/gui.py:821
+#: ../lib/xgsch2pcb/gui.py:828
 msgid "Create new:"
 msgstr "Creer nieuwe:"
 
@@ -233,15 +239,15 @@ msgstr "Creer nieuwe:"
 #. File chooser button to select and existing file.  Currently
 #. limited to local files 'cos gsch2pcb can't handle remote
 #. files.
-#: ../lib/xgsch2pcb/gui.py:834
+#: ../lib/xgsch2pcb/gui.py:841
 msgid "Select schematic page..."
 msgstr "Selecteer schema pagina..."
 
-#: ../lib/xgsch2pcb/gui.py:901
+#: ../lib/xgsch2pcb/gui.py:908
 msgid "New project..."
 msgstr "Nieuw project..."
 
-#: ../lib/xgsch2pcb/gui.py:934
+#: ../lib/xgsch2pcb/gui.py:941
 #, python-format
 msgid ""
 "<span weight=\"bold\" size=\"larger\">A project named \"%s\" already exists. "
@@ -256,7 +262,7 @@ msgstr ""
 "Het project bestaat reeds in bestandenmap \"%s\". Vervangen zal de inhoud "
 "overschrijven."
 
-#: ../lib/xgsch2pcb/gui.py:944
+#: ../lib/xgsch2pcb/gui.py:951
 msgid "_Replace"
 msgstr "Vervang"
 
