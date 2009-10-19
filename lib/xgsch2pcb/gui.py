@@ -190,6 +190,12 @@ class MonitorWindow(gtk.Window):
         self.aboutdialog.set_translator_credits(_('translator-credits'))
         self.aboutdialog.set_transient_for( self )
 
+        # Options dialog
+        # ------------
+        self.optionsdialog = ProjectOptionsDialog( self )
+        self.optionsdialog.set_name(_("TODO: Options dialog"))
+        self.optionsdialog.set_transient_for( self )
+
         self.pcbmanager = None
         self.set_project(project)
 
@@ -236,13 +242,15 @@ class MonitorWindow(gtk.Window):
         button.connect("clicked", self.event_close_button_clicked)
         self.toolbar_buttons['close'] = button
 
-        #button = gtk.ToolButton(gtk.STOCK_PROPERTIES)
-        #button.set_tooltip_text(_("Project options"))
-        #toolbar.insert(button, -1)
-        #button.connect("clicked",
-        #               self.event_properties_button_clicked)
-        #self.toolbar_buttons['close'] = button
-        #button.set_sensitive(False) #FIXME
+#        toolbar.insert(gtk.SeparatorToolItem(), -1)
+
+        icon = gtk.Image()
+        icon.set_from_stock(gtk.STOCK_PROPERTIES, toolbar.get_icon_size())
+        button = gtk.ToolButton(icon, _("Options"))
+        button.set_tooltip_text(_("Project options"))
+        toolbar.insert(button, -1)
+        button.connect("clicked", self.event_options_button_clicked)
+        self.toolbar_buttons['options'] = button
 
         toolbar.insert(gtk.SeparatorToolItem(), -1)
 
@@ -528,6 +536,11 @@ class MonitorWindow(gtk.Window):
     def event_quit_button_clicked(self, button):
         self.handle_quit()
 
+    def event_options_button_clicked(self, button):
+        self.optionsdialog.show_all()
+        self.optionsdialog.run()
+        self.optionsdialog.hide_all()
+
     def event_about_button_clicked(self, button):
         self.aboutdialog.show_all()
         self.aboutdialog.run()
@@ -565,6 +578,7 @@ class MonitorWindow(gtk.Window):
         widget_list = ( self.toolbar_buttons['save'],
                         #self.toolbar_buttons['saveas'],
                         self.toolbar_buttons['close'],
+                        self.toolbar_buttons['options'],
                         self.pagelist,
                         self.addpagebutton )
 
@@ -964,3 +978,201 @@ class NewProjectDialog(gtk.FileChooserDialog):
         return gtk.FILE_CHOOSER_CONFIRMATION_ACCEPT_FILENAME
 
 gobject.type_register( NewProjectDialog )
+
+
+class PathChooser(gtk.VBox):
+    def remove_clicked_cb(self, button, treeview):
+        [model, iter] = treeview.get_selection().get_selected()
+
+        if not iter:
+            return
+
+        model.remove(iter)
+
+    def selection_changed_cb(self, treeselection):
+        [model, iter] = treeselection.get_selected()
+
+        if not iter:
+            self.hbox.set_sensitive(False)
+            return
+        else:
+            self.hbox.set_sensitive(True)
+
+        path = model.get_path(iter)
+
+        if path[0] == 0:
+            # Do something for the "New search path mode"
+            self.remove_button.set_sensitive(False)
+        else:
+            self.remove_button.set_sensitive(True)
+            searchpath = model.get(iter, 0)[0]
+            self.file_button.set_current_folder(searchpath)
+
+    def __init__(self):
+        gtk.VBox.__init__(self, False, 0)
+
+        # GUI Spacing
+        self.set_spacing(6)
+
+        hbox = gtk.HBox()
+        self.pack_start(hbox, False, True)
+
+        # GUI Spacing
+        hbox.set_spacing(6)
+
+        self.hbox = hbox
+
+        filebutton = gtk.FileChooserButton(_("Choose path"))
+        filebutton.set_action(gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER)
+        hbox.pack_start(filebutton, True, True)
+        self.file_button = filebutton
+
+        removebutton = gtk.Button(stock=gtk.STOCK_REMOVE)
+        hbox.pack_start(removebutton, False, True)
+        self.remove_button = removebutton
+
+        frame = gtk.Frame()
+        frame.set_shadow_type(gtk.SHADOW_IN)
+        self.pack_start(frame, True, True)
+
+        hbox = gtk.HBox()
+        frame.add(hbox)
+
+        pathmodel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
+        pathmodel.append(["[Insert new path]", "#808080"])
+        pathmodel.append(["/usr/local/share/pcb_footprints", "black"])
+        pathmodel.append(["/usr/local/share/pcb_footprints_vetted", "black"])
+        pathmodel.append(["/usr/local/share/pcb_footprints_untested", "black"])
+
+        treeview = gtk.TreeView(pathmodel)
+        hbox.pack_start(treeview, True, True)
+
+        scrollbar = gtk.VScrollbar()
+        hbox.pack_start(scrollbar, False, True)
+
+        renderer = gtk.CellRendererText()
+        treeview.insert_column_with_attributes(0, "", renderer, text=0, foreground=1)
+        treeview.set_headers_visible(False)
+
+        treeview.set_vadjustment(scrollbar.get_adjustment())
+        treeview.set_headers_visible(False)
+        treeview.set_size_request(1,1)
+
+        treeview.get_selection().connect("changed", self.selection_changed_cb)
+        self.remove_button.connect("clicked", self.remove_clicked_cb, treeview)
+
+gobject.type_register( PathChooser )
+
+class ProjectOptionsDialog(gtk.Dialog):
+    def __init__(self, parent):
+        gtk.Dialog.__init__(self, _('Project options'), parent,
+                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+                            ( gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE ))
+
+        # GUI Spacing
+        self.set_has_separator(False)
+        #self.set_border_width(12)
+
+        alignment = gtk.Alignment( 0, 0, 1, 1 )
+        alignment.set_padding( 12, 12, 12, 12 )
+        self.vbox.pack_start(alignment)
+
+        vbox = gtk.VBox()
+        alignment.add(vbox)
+        vbox.set_spacing(6)
+
+        label = gtk.Label(_("<b>General</b>"))
+        label.set_use_markup(True)
+        label.set_alignment(0, 0.5)
+        vbox.pack_start(label, False, True)
+
+        alignment = gtk.Alignment( 0, 0, 0, 0 )
+        alignment.set_padding( 6, 6, 12, 0 )
+        vbox.pack_start(alignment, False, True)
+
+        generalvbox = gtk.VBox()
+        alignment.add(generalvbox)
+        generalvbox.set_spacing(6)
+
+        checkbutton = gtk.CheckButton(_("Preserve PCB elements not in the schematic"))
+        generalvbox.pack_start(checkbutton, False, True)
+
+        radiobutton1 = gtk.RadioButton(None, _("Prefer M4 footprints to file footprints"))
+        generalvbox.pack_start(radiobutton1, False, True)
+
+        radiobutton2 = gtk.RadioButton(radiobutton1, _("Prefer file footprints to M4 footprints"))
+        generalvbox.pack_start(radiobutton2, False, True)
+
+        radiobutton3 = gtk.RadioButton(radiobutton1, _("Only use file footprints"))
+        generalvbox.pack_start(radiobutton3, False, True)
+
+        label = gtk.Label(_("<b>Footprint search paths</b>"))
+        label.set_use_markup(True)
+        label.set_alignment(0, 0.5)
+        vbox.pack_start(label, False, True)
+
+        alignment = gtk.Alignment( 0, 0, 1, 1 )
+        alignment.set_padding( 6, 6, 12, 0 )
+        vbox.pack_start(alignment, True, True)
+
+        pathchooser = PathChooser()
+        alignment.add (pathchooser)
+
+        advancedoptions = gtk.Expander(_("Advanced options"))
+        advancedoptions.set_spacing(6)
+        label = advancedoptions.get_label_widget()
+        label.set_padding(6,6)
+        vbox.pack_start(advancedoptions, False, True)
+
+        advancedvbox = gtk.VBox()
+        advancedoptions.add(advancedvbox)
+
+        # GUI Spacing
+        advancedvbox.set_spacing(6)
+
+        label = gtk.Label(_("<b>M4 Options</b>"))
+        label.set_use_markup(True)
+        label.set_alignment(0, 0.5)
+        advancedvbox.pack_start(label)
+
+        alignment = gtk.Alignment( 0, 0, 1, 0 )
+        alignment.set_padding( 0, 0, 12, 0 )
+        advancedvbox.pack_start(alignment)
+
+        table = gtk.Table(3, 2)
+        alignment.add( table )
+
+        # GUI Spacing
+        table.set_row_spacings(6)
+        table.set_col_spacings(6)
+
+        label = gtk.Label(_("M4 command :"))
+        label.set_alignment(0, 0.5)
+        table.attach (label, 0, 1, 0, 1, gtk.FILL)
+
+        entry = gtk.Entry()
+        table.attach (entry, 1, 2, 0, 1)
+
+        label = gtk.Label(_("M4 PCB path :"))
+        label.set_alignment(0, 0.5)
+        table.attach (label, 0, 1, 1, 2, gtk.FILL)
+
+        entry = gtk.Entry()
+        table.attach (entry, 1, 2, 1, 2)
+
+        label = gtk.Label(_("M4 extra file :"))
+        label.set_alignment(0, 0.5)
+        table.attach (label, 0, 1, 2, 3, gtk.FILL)
+
+        entry = gtk.Entry()
+        table.attach (entry, 1, 2, 2, 3)
+
+        label = gtk.Label(_("<b>Extra gnetlist arguments</b>"))
+        label.set_use_markup(True)
+        label.set_alignment(0, 0.5)
+        advancedvbox.pack_start(label, False, True)
+
+        entry = gtk.Entry()
+        advancedvbox.pack_start(entry, False, True)
+
+gobject.type_register( ProjectOptionsDialog )
