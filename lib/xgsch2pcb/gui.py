@@ -193,7 +193,6 @@ class MonitorWindow(gtk.Window):
         self.pcbmanager = None
         self.set_project(project)
 
-
     def __init_toolbar__(self, box):
         toolbar = gtk.Toolbar()
         box.pack_start(toolbar, False, True)
@@ -201,40 +200,34 @@ class MonitorWindow(gtk.Window):
 
         button = gtk.ToolButton(gtk.STOCK_QUIT)
         toolbar.insert(button, -1)
-        button.connect("clicked",
-                       self.event_quit_button_clicked) 
+        button.connect("clicked", self.event_quit_button_clicked)
         self.toolbar_buttons['quit'] = button
 
         toolbar.insert(gtk.SeparatorToolItem(), -1)
-        
+
         button = gtk.ToolButton(gtk.STOCK_NEW)
         toolbar.insert(button, -1)
-        button.connect("clicked",
-                       self.event_new_button_clicked)
+        button.connect("clicked", self.event_new_button_clicked)
         self.toolbar_buttons['new'] = button
 
         button = gtk.ToolButton(gtk.STOCK_OPEN)
         toolbar.insert(button, -1)
-        button.connect("clicked",
-                       self.event_open_button_clicked)
+        button.connect("clicked", self.event_open_button_clicked)
         self.toolbar_buttons['open'] = button
 
         button = gtk.ToolButton(gtk.STOCK_SAVE)
         toolbar.insert(button, -1)
-        button.connect("clicked",
-                       self.event_save_button_clicked)
+        button.connect("clicked", self.event_save_button_clicked)
         self.toolbar_buttons['save'] = button
 
         #button = gtk.ToolButton(gtk.STOCK_SAVE_AS)
         #toolbar.insert(button, -1)
-        #button.connect("clicked",
-        #               self.event_saveas_button_clicked)
+        #button.connect("clicked", self.event_saveas_button_clicked)
         #self.toolbar_buttons['saveas'] = button
 
         button = gtk.ToolButton(gtk.STOCK_CLOSE)
         toolbar.insert(button, -1)
-        button.connect("clicked",
-                       self.event_close_button_clicked)
+        button.connect("clicked", self.event_close_button_clicked)
         self.toolbar_buttons['close'] = button
 
         #button = gtk.ToolButton(gtk.STOCK_PROPERTIES)
@@ -245,11 +238,10 @@ class MonitorWindow(gtk.Window):
         #button.set_sensitive(False) #FIXME
 
         toolbar.insert(gtk.SeparatorToolItem(), -1)
-        
+
         button = gtk.ToolButton(gtk.STOCK_ABOUT)
         toolbar.insert(button, -1)
-        button.connect("clicked",
-                       self.event_about_button_clicked)
+        button.connect("clicked", self.event_about_button_clicked)
         self.toolbar_buttons['about'] = button
 
 
