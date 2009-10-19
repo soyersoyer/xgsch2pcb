@@ -199,6 +199,7 @@ class MonitorWindow(gtk.Window):
         self.toolbar_buttons = {}
 
         button = gtk.ToolButton(gtk.STOCK_QUIT)
+        button.set_tooltip_text(_("Quit"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_quit_button_clicked)
         self.toolbar_buttons['quit'] = button
@@ -206,31 +207,37 @@ class MonitorWindow(gtk.Window):
         toolbar.insert(gtk.SeparatorToolItem(), -1)
 
         button = gtk.ToolButton(gtk.STOCK_NEW)
+        button.set_tooltip_text(_("New project"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_new_button_clicked)
         self.toolbar_buttons['new'] = button
 
         button = gtk.ToolButton(gtk.STOCK_OPEN)
+        button.set_tooltip_text(_("Open project"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_open_button_clicked)
         self.toolbar_buttons['open'] = button
 
         button = gtk.ToolButton(gtk.STOCK_SAVE)
+        button.set_tooltip_text(_("Save project"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_save_button_clicked)
         self.toolbar_buttons['save'] = button
 
         #button = gtk.ToolButton(gtk.STOCK_SAVE_AS)
+        #button.set_tooltip_text(_("Save project as..."))
         #toolbar.insert(button, -1)
         #button.connect("clicked", self.event_saveas_button_clicked)
         #self.toolbar_buttons['saveas'] = button
 
         button = gtk.ToolButton(gtk.STOCK_CLOSE)
+        button.set_tooltip_text(_("Close project"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_close_button_clicked)
         self.toolbar_buttons['close'] = button
 
         #button = gtk.ToolButton(gtk.STOCK_PROPERTIES)
+        #button.set_tooltip_text(_("Project options"))
         #toolbar.insert(button, -1)
         #button.connect("clicked",
         #               self.event_properties_button_clicked)
@@ -240,6 +247,7 @@ class MonitorWindow(gtk.Window):
         toolbar.insert(gtk.SeparatorToolItem(), -1)
 
         button = gtk.ToolButton(gtk.STOCK_ABOUT)
+        button.set_tooltip_text(_("About xgsch2pcb"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_about_button_clicked)
         self.toolbar_buttons['about'] = button
