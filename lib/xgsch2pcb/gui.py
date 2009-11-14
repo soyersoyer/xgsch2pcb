@@ -2,6 +2,7 @@
 
 # xgsch2pcb - a GUI for gsch2pcb
 # Copyright (C) 2006 University of Cambridge
+# Copyright (C) 2006-2009 xgsch2pcb contributors (See ChangeLog for details)
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -183,7 +184,7 @@ class MonitorWindow(gtk.Window):
         self.aboutdialog.set_name(_("xgsch2pcb"))
         self.aboutdialog.set_comments(_("a GUI for gsch2pcb"))
         self.aboutdialog.set_version(config.VERSION)
-        self.aboutdialog.set_copyright("University of Cambridge 2006")
+        self.aboutdialog.set_copyright("University of Cambridge 2006\nxgsch2pcb Contributors 2006-2009 (See ChangeLog)")
         self.aboutdialog.set_authors(['Peter Brett', 'Peter Clifton', 'Andrey Smirnov'])
         gtk.about_dialog_set_url_hook(about_url_cb, None)
         self.aboutdialog.set_website('http://geda.seul.org/')
