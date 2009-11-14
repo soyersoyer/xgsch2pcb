@@ -19,6 +19,86 @@
 
 import os, gobject
 
+class Gsch2PCBOption(object):
+    """Gsch2PCBOption - class representing project's option
+
+This class represents single option which can be added to the gsch2pcb's
+project file. Each option created must have at least two attributes:
+`name` - name of the option that is used in project file,
+`attr_name` - name of the corresponding attribute of Gsch2PCBProject instance
+which holds option's value. Additional three parameters `read_func`, `write_func` and
+`default_value` which are function to read option's value from config,
+function to write option's value to the config and default option's value correspondingly.
+"""
+    def __init__(self, **kwargs):
+        def default_read_function(option, project, parts):
+            value = getattr(project, option.attr_name)
+            if value == option.default_value and len(parts) > 1:
+                setattr(project, option.attr_name, parts[1])
+
+        def default_write_function(option, project, save_file):
+            value = getattr(project, option.attr_name)
+            if value:
+                save_file.write(option.name + ' %s\n' % value)
+
+        self.name=kwargs['name']
+        self.attr_name=kwargs['attr_name']
+        self.read_func=kwargs.get('read_func', default_read_function)
+        self.write_func=kwargs.get('write_func', default_write_function)
+        self.default_value=kwargs.get('default_value', None)
+        self.emitted = False
+
+    # Each write function must have following signature:
+    # write_function(option, project, save_file)
+    # where `option` is instance of the option that is being written by that function,
+    # `project` is instance of a project which this option is used in, and
+    # `save_file` is the file the aforementioned project is saved to.
+
+    @staticmethod
+    def join_then_write(option, project, save_file):
+        values = getattr(project, option.attr_name)
+        if values:
+            save_file.write(option.name + ' %s\n' % ' '.join(values))
+    @staticmethod
+    def write_if_equal(value):
+        def func(option, project, save_file):
+            if getattr(project, option.attr_name) == value:
+                save_file.write(option.name + '\n')
+        return func
+
+    # Every read function must have the following signatue:
+    # read_function(option, project, parts)
+    # where `option` is instance of the option that is being read by that function,
+    # `project` is instance of a project which this option is used in, and
+    # `parts` is the array that have option's name as its first value and
+    # for some commands string corresponding to option as second(see Gsch2PCBProject's load function).
+
+    @staticmethod
+    def read_multiple_values(option, project, parts):
+        if len(parts) > 1:
+            value = parts[1].split()
+        else:
+            value = []
+        setattr(project, option.attr_name, value)
+    @staticmethod
+    def read_and_set_value(value):
+        def func(option, project, parts):
+            setattr(project, option.attr_name, value)
+        return func
+
+
+class Gsch2PCBOptionStore(dict):
+    """Gsch2PCBOptionStore - slightly augmented dictionary class
+
+This is augmented dictionary class. The only difference
+between it and standrad `dict` class is in added `add` function
+which is used to create and add options to associative array that
+this class represents.
+"""
+    def add(self, **kwargs):
+        option = Gsch2PCBOption(**kwargs)
+        self[option.name] = option
+
 class Gsch2PCBProject(gobject.GObject):
 
     __gsignals__ = { 'dirty-flag-changed' :
@@ -35,12 +115,51 @@ class Gsch2PCBProject(gobject.GObject):
                               (gobject.TYPE_STRING, )),
                    }
 
+    PREFER_M4_FOOTPRINTS     = 0
+    PREFER_FILE_FOOTPRINTS   = 1
+    USE_ONLY_FILE_FOOTPRINTS = 2
+
+    options = Gsch2PCBOptionStore()
+    options.add(name='schematics', attr_name= 'pages',
+                read_func=Gsch2PCBOption.read_multiple_values,
+                write_func=Gsch2PCBOption.join_then_write,
+                default_value=[])
+
+    options.add(name='output-name', attr_name='output_name')
+
+    options.add(name='preserve-unfound', attr_name='preserve_unfound',
+                read_func=Gsch2PCBOption.read_and_set_value(True),
+                write_func=Gsch2PCBOption.write_if_equal(True),
+                default_value=False)
+
+    options.add(name='skip-m4', attr_name='footprint_type_choice',
+                read_func=Gsch2PCBOption.read_and_set_value(USE_ONLY_FILE_FOOTPRINTS),
+                write_func=Gsch2PCBOption.write_if_equal(USE_ONLY_FILE_FOOTPRINTS),
+                default_value=PREFER_M4_FOOTPRINTS)
+
+    options.add(name='use-files', attr_name='footprint_type_choice',
+                read_func=Gsch2PCBOption.read_and_set_value(PREFER_FILE_FOOTPRINTS),
+                write_func=Gsch2PCBOption.write_if_equal(PREFER_FILE_FOOTPRINTS),
+                default_value=PREFER_M4_FOOTPRINTS)
+
+    options.add(name='elements-dir', attr_name='elements_dir',
+                read_func=Gsch2PCBOption.read_multiple_values,
+                write_func=Gsch2PCBOption.join_then_write,
+                default_value=[])
+
+    options.add(name='m4-command', attr_name='m4_command')
+    options.add(name='m4-file', attr_name='m4_file')
+    options.add(name='m4-pcbdir', attr_name='m4_pcbdir')
+    options.add(name='gnetlist-arg', attr_name='gnetlist_arg')
+
     def __init__(self, filename=None, output_name=None):
         gobject.GObject.__init__(self)
 
+        for _, option in self.options.items():
+            setattr(self, option.attr_name, option.default_value)
+
         self.filename = filename
         self.dirty = False
-        self.pages = []
         self.lines = []
 
         if output_name != None:
@@ -72,24 +191,19 @@ class Gsch2PCBProject(gobject.GObject):
             self.lines.append(line)
             parts = line.strip().split(None, 1)
 
-            opt = None
+            option_name = None
             if parts:
-                opt = parts[0]
+                option_name = parts[0]
 
             # Skip blank lines and comment lines (like gsch2pcb)
-            if not opt or opt[0] == '#' or opt[0] == '/' or opt[0] == ';':
+            if not option_name or option_name in ('#', '/', ';'):
                 pass
-            # Pick out the list of schematics
-            elif opt == 'schematics':
-                if len(parts) > 1:
-                    self.pages = parts[1].split()
-                else:
-                    self.pages = []
-            # Pick out the output filename
-            elif opt == 'output-name':
-                self.output_name = parts[1]
             else:
-                print 'Warning: Unsupported project file line "%s"' % line.strip()
+                try:
+                    option = self.options[option_name]
+                    option.read_func(option, self, parts)
+                except KeyError:
+                    print 'Warning: Unsupported project file line "%s"' % line.strip()
         fp.close()
         if fromfile == self.filename:
             self.set_dirty(False)
@@ -99,30 +213,33 @@ class Gsch2PCBProject(gobject.GObject):
             destfile = self.filename
         if destfile == None:
             raise Exception, 'No filename specified for project'
-
-        emitted_schematics = False
-        emitted_output_name = False
-
+        # Write values of options that were previously found
+        # in project file
         fp = open(destfile, 'wb')
         for line in self.lines:
             parts = line.strip().split(None, 1)
-            opt = None
+
+            option_name = None
             if parts:
-                opt = parts[0]
+                option_name = parts[0]
 
-            if opt == 'schematics':
-                fp.write('schematics %s\n' % ' '.join(self.pages))
-                emitted_schematics = True
-            elif opt == 'output-name':
-                fp.write('output-name %s\n' % self.output_name)
-                emitted_output_name = True
-            else:
+            try:
+                option = self.options[option_name]
+                # If project file contains more than one line corresponding to the
+                # same option first one will be overwritten and all the rest ones will be
+                # left unchanged
+                if not option.emitted:
+                    option.write_func(option, self, fp)
+                    option.emitted = True
+                else:
+                    fp.write(line)
+            except KeyError:
                 fp.write(line)
-
-        if not emitted_schematics:
-            fp.write('schematics %s\n' % ' '.join(self.pages))
-        if not emitted_output_name:
-            fp.write('output-name %s\n' % self.output_name)
+        # Write values of newly added options
+        for _, option in self.options.items():
+            if not option.emitted:
+                option.write_func(option, self, fp)
+            option.emitted = False # Reset emitted field for next save() call
 
         fp.close()
         if destfile == self.filename:

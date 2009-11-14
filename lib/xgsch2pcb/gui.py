@@ -190,11 +190,6 @@ class MonitorWindow(gtk.Window):
         self.aboutdialog.set_translator_credits(_('translator-credits'))
         self.aboutdialog.set_transient_for( self )
 
-        # Options dialog
-        # ------------
-        self.optionsdialog = ProjectOptionsDialog( self )
-        self.optionsdialog.set_name(_("TODO: Options dialog"))
-        self.optionsdialog.set_transient_for( self )
 
         self.pcbmanager = None
         self.set_project(project)
@@ -537,9 +532,24 @@ class MonitorWindow(gtk.Window):
         self.handle_quit()
 
     def event_options_button_clicked(self, button):
-        self.optionsdialog.show_all()
-        self.optionsdialog.run()
-        self.optionsdialog.hide_all()
+        options_dialog = ProjectOptionsDialog( self )
+        options_dialog.set_name(_("Options dialog"))
+        options_dialog.set_transient_for( self )
+
+        options_dialog.show_all()
+        options_dialog.run()
+        options_dialog.hide_all()
+
+        self.project.elements_dir = []
+        options_dialog.path_chooser.path_model.foreach(
+            lambda m, p, i, ud: self.project.elements_dir.append(m.get_value(i, 0)),
+            None)
+
+        self.project.m4_command   = options_dialog.m4_command_entry.get_text()
+        self.project.m4_pcbdir    = options_dialog.m4_pcbpath_entry.get_text()
+        self.project.m4_file      = options_dialog.m4_extra_file_entry.get_text()
+        self.project.gnetlist_arg = options_dialog.gnetlist_arg_entry.get_text()
+
 
     def event_about_button_clicked(self, button):
         self.aboutdialog.show_all()
@@ -989,47 +999,39 @@ class PathChooser(gtk.VBox):
 
         model.remove(iter)
 
+    def add_clicked_cb(self, button, pathmodel):
+        filedialog = gtk.FileChooserDialog(action=gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
+                                           buttons= (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                                     gtk.STOCK_ADD, gtk.RESPONSE_ACCEPT))
+
+        filedialog.show_all()
+        response = filedialog.run()
+        filedialog.hide_all()
+
+        if response == gtk.RESPONSE_ACCEPT:
+            for path in filedialog.get_filenames():
+                it   = pathmodel.get_iter_first()
+                unique = True
+                while it is not None:
+                    if pathmodel.get_value(it, 0) == path:
+                        unique = False
+                        break
+                    it = pathmodel.iter_next(it)
+                if unique:
+                    pathmodel.append([path, "black"])
+
+
+
     def selection_changed_cb(self, treeselection):
         [model, iter] = treeselection.get_selected()
+        self.remove_button.set_sensitive(True if iter else False)
 
-        if not iter:
-            self.hbox.set_sensitive(False)
-            return
-        else:
-            self.hbox.set_sensitive(True)
 
-        path = model.get_path(iter)
-
-        if path[0] == 0:
-            # Do something for the "New search path mode"
-            self.remove_button.set_sensitive(False)
-        else:
-            self.remove_button.set_sensitive(True)
-            searchpath = model.get(iter, 0)[0]
-            self.file_button.set_current_folder(searchpath)
-
-    def __init__(self):
+    def __init__(self, directories):
         gtk.VBox.__init__(self, False, 0)
 
         # GUI Spacing
         self.set_spacing(6)
-
-        hbox = gtk.HBox()
-        self.pack_start(hbox, False, True)
-
-        # GUI Spacing
-        hbox.set_spacing(6)
-
-        self.hbox = hbox
-
-        filebutton = gtk.FileChooserButton(_("Choose path"))
-        filebutton.set_action(gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER)
-        hbox.pack_start(filebutton, True, True)
-        self.file_button = filebutton
-
-        removebutton = gtk.Button(stock=gtk.STOCK_REMOVE)
-        hbox.pack_start(removebutton, False, True)
-        self.remove_button = removebutton
 
         frame = gtk.Frame()
         frame.set_shadow_type(gtk.SHADOW_IN)
@@ -1039,10 +1041,9 @@ class PathChooser(gtk.VBox):
         frame.add(hbox)
 
         pathmodel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
-        pathmodel.append(["[Insert new path]", "#808080"])
-        pathmodel.append(["/usr/local/share/pcb_footprints", "black"])
-        pathmodel.append(["/usr/local/share/pcb_footprints_vetted", "black"])
-        pathmodel.append(["/usr/local/share/pcb_footprints_untested", "black"])
+        for path in directories:
+            pathmodel.append([path, "black"])
+        self.path_model = pathmodel
 
         treeview = gtk.TreeView(pathmodel)
         hbox.pack_start(treeview, True, True)
@@ -1058,8 +1059,25 @@ class PathChooser(gtk.VBox):
         treeview.set_headers_visible(False)
         treeview.set_size_request(1,1)
 
+        hbox = gtk.HBox()
+        self.pack_start(hbox, False, True)
+
+        # GUI Spacing
+        hbox.set_spacing(6)
+
+        addbutton = gtk.Button(stock=gtk.STOCK_ADD)
+        hbox.pack_start(addbutton, False, True)
+        self.add_button = addbutton
+
+        removebutton = gtk.Button(stock=gtk.STOCK_REMOVE)
+        removebutton.set_sensitive(False)
+        hbox.pack_start(removebutton, False, True)
+        self.remove_button = removebutton
+
+
         treeview.get_selection().connect("changed", self.selection_changed_cb)
         self.remove_button.connect("clicked", self.remove_clicked_cb, treeview)
+        self.add_button.connect("clicked", self.add_clicked_cb, pathmodel)
 
 gobject.type_register( PathChooser )
 
@@ -1068,6 +1086,8 @@ class ProjectOptionsDialog(gtk.Dialog):
         gtk.Dialog.__init__(self, _('Project options'), parent,
                             gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                             ( gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE ))
+
+        self.project = parent.project
 
         # GUI Spacing
         self.set_has_separator(False)
@@ -1095,16 +1115,18 @@ class ProjectOptionsDialog(gtk.Dialog):
         generalvbox.set_spacing(6)
 
         checkbutton = gtk.CheckButton(_("Preserve PCB elements not in the schematic"))
+        checkbutton.set_active(parent.project.preserve_unfound)
         generalvbox.pack_start(checkbutton, False, True)
+        checkbutton.connect('toggled', self.preserve_pcb_checkbox_toggled)
 
-        radiobutton1 = gtk.RadioButton(None, _("Prefer M4 footprints to file footprints"))
-        generalvbox.pack_start(radiobutton1, False, True)
-
-        radiobutton2 = gtk.RadioButton(radiobutton1, _("Prefer file footprints to M4 footprints"))
-        generalvbox.pack_start(radiobutton2, False, True)
-
-        radiobutton3 = gtk.RadioButton(radiobutton1, _("Only use file footprints"))
-        generalvbox.pack_start(radiobutton3, False, True)
+        radiobutton = None
+        for choice, label in [(Gsch2PCBProject.PREFER_M4_FOOTPRINTS, _("Prefer M4 footprints to file footprints")),
+                              (Gsch2PCBProject.PREFER_FILE_FOOTPRINTS, _("Prefer file footprints to M4 footprints")),
+                              (Gsch2PCBProject.USE_ONLY_FILE_FOOTPRINTS, _("Only use file footprints"))]:
+            radiobutton = gtk.RadioButton(radiobutton, label)
+            radiobutton.set_active(parent.project.footprint_type_choice == choice)
+            generalvbox.pack_start(radiobutton, False, True)
+            radiobutton.connect('toggled', self.footprints_radio_toggled, choice)
 
         label = gtk.Label(_("<b>Footprint search paths</b>"))
         label.set_use_markup(True)
@@ -1115,8 +1137,9 @@ class ProjectOptionsDialog(gtk.Dialog):
         alignment.set_padding( 6, 6, 12, 0 )
         vbox.pack_start(alignment, True, True)
 
-        pathchooser = PathChooser()
+        pathchooser = PathChooser(parent.project.elements_dir)
         alignment.add (pathchooser)
+        self.path_chooser = pathchooser
 
         advancedoptions = gtk.Expander(_("Advanced options"))
         advancedoptions.set_spacing(6)
@@ -1146,33 +1169,39 @@ class ProjectOptionsDialog(gtk.Dialog):
         table.set_row_spacings(6)
         table.set_col_spacings(6)
 
-        label = gtk.Label(_("M4 command :"))
-        label.set_alignment(0, 0.5)
-        table.attach (label, 0, 1, 0, 1, gtk.FILL)
+        self.m4_command_entry = gtk.Entry()
+        self.m4_pcbpath_entry = gtk.Entry()
+        self.m4_extra_file_entry = gtk.Entry()
 
-        entry = gtk.Entry()
-        table.attach (entry, 1, 2, 0, 1)
+        for i, (entry, label_text, entry_contents) in enumerate([
+                (self.m4_command_entry,    _("M4 command :"),    parent.project.m4_command),
+                (self.m4_pcbpath_entry,    _("M4 PCB path :"),   parent.project.m4_pcbdir),
+                (self.m4_extra_file_entry, _("M4 extra file :"), parent.project.m4_file)]):
+            label = gtk.Label(label_text)
+            label.set_alignment(0, 0.5)
+            table.attach (label, 0, 1, i, i + 1, gtk.FILL)
 
-        label = gtk.Label(_("M4 PCB path :"))
-        label.set_alignment(0, 0.5)
-        table.attach (label, 0, 1, 1, 2, gtk.FILL)
+            if entry_contents:
+                entry.set_text(entry_contents)
 
-        entry = gtk.Entry()
-        table.attach (entry, 1, 2, 1, 2)
-
-        label = gtk.Label(_("M4 extra file :"))
-        label.set_alignment(0, 0.5)
-        table.attach (label, 0, 1, 2, 3, gtk.FILL)
-
-        entry = gtk.Entry()
-        table.attach (entry, 1, 2, 2, 3)
+            table.attach (entry, 1, 2, i, i + 1)
 
         label = gtk.Label(_("<b>Extra gnetlist arguments</b>"))
         label.set_use_markup(True)
         label.set_alignment(0, 0.5)
         advancedvbox.pack_start(label, False, True)
 
-        entry = gtk.Entry()
-        advancedvbox.pack_start(entry, False, True)
+        self.gnetlist_arg_entry = gtk.Entry()
+        if parent.project.gnetlist_arg:
+            self.gnetlist_arg_entry.set_text(parent.project.gnetlist_arg)
+
+        advancedvbox.pack_start(self.gnetlist_arg_entry, False, True)
+
+    def preserve_pcb_checkbox_toggled(self, widget, data=None):
+        self.project.preserve_unfound = widget.get_active()
+        # self.parent.project.set_dirty(True)
+    def footprints_radio_toggled(self, widget, data=None):
+        self.project.footprint_type_choice = data
+        # self.parent.project.set_dirty(True)
 
 gobject.type_register( ProjectOptionsDialog )
