@@ -128,7 +128,7 @@ class Gsch2PCBProject(gobject.GObject):
 
     options.add(name='output-name', attr_name='output_name')
 
-    options.add(name='preserve-unfound', attr_name='preserve_unfound',
+    options.add(name='preserve', attr_name='preserve_unfound',
                 read_func=Gsch2PCBOption.read_and_set_value(True),
                 write_func=Gsch2PCBOption.write_if_equal(True),
                 default_value=False)
