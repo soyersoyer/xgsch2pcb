@@ -187,7 +187,7 @@ class MonitorWindow(gtk.Window):
         self.aboutdialog.set_copyright("University of Cambridge 2006\nxgsch2pcb Contributors 2006-2009 (See ChangeLog)")
         self.aboutdialog.set_authors(['Peter Brett', 'Peter Clifton', 'Andrey Smirnov'])
         gtk.about_dialog_set_url_hook(about_url_cb, None)
-        self.aboutdialog.set_website('http://geda.seul.org/')
+        self.aboutdialog.set_website('http://www.gpleda.org/')
         self.aboutdialog.set_translator_credits(_('translator-credits'))
         self.aboutdialog.set_transient_for( self )
 
