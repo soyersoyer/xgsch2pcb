@@ -38,9 +38,8 @@ if libpath not in sys.path:
 import gettext
 try:
     t = gettext.translation('@PACKAGE@', localedir)
-except IOError:
-    print 'Warning: Failed to load gettext translations'
-
+except:
+    pass
 
 from gui import *
 
