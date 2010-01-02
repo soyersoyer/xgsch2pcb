@@ -79,13 +79,6 @@ The main window is divided into three main areas:
   necessary.  The 'Update layout' button forces an update of the PCB
   layout even if one isn't strictly necessary.
 
-In order for the update process to work properly, you should never
-launch ``pcb`` to edit your PCB layout except through ``xgsch2pcb``.
-If you are editing the layout without ``xgsch2pcb`` running and then
-wish to edit your layout you should close ``pcb``, launch
-``xgsch2pcb`` and then use the 'Edit layout' button to launch ``pcb``
-again.
-
 The update process will carry out the following actions to modify your
 layout, after launching ``pcb`` if isn't already running:
 
