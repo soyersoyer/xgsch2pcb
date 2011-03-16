@@ -28,7 +28,7 @@ AM_INIT_AUTOMAKE([foreign])
 
 
 PYTHON_WANTVERSION=2.4
-PYTHON_WANTMODULES="commands gettext os os.path re shutil stat subprocess dbus dbus.glib dbus.service"
+PYTHON_WANTMODULES="commands gettext os os.path re shutil stat subprocess dbus dbus.glib dbus.service string"
 GTK_WANTVERSION=2.8
 
 

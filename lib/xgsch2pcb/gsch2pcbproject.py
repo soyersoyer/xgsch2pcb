@@ -18,7 +18,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-import os, gobject
+import os, gobject, funcs
 
 class Gsch2PCBOption(object):
     """Gsch2PCBOption - class representing project's option
@@ -40,7 +40,8 @@ function to write option's value to the config and default option's value corres
         def default_write_function(option, project, save_file):
             value = getattr(project, option.attr_name)
             if value:
-                save_file.write(option.name + ' %s\n' % value)
+                line = "%s %s\n" % (option.name, funcs.shell_quote (value))
+                save_file.write(line)
 
         self.name=kwargs['name']
         self.attr_name=kwargs['attr_name']
@@ -59,7 +60,8 @@ function to write option's value to the config and default option's value corres
     def join_then_write(option, project, save_file):
         values = getattr(project, option.attr_name)
         if values:
-            save_file.write(option.name + ' %s\n' % ' '.join(values))
+            s = " ".join (map (funcs.shell_quote, values))
+            save_file.write("%s %s\n" % (option.name, s))
     @staticmethod
     def write_if_equal(value):
         def func(option, project, save_file):
@@ -76,10 +78,7 @@ function to write option's value to the config and default option's value corres
 
     @staticmethod
     def read_multiple_values(option, project, parts):
-        if len(parts) > 1:
-            value = parts[1].split()
-        else:
-            value = []
+        value = parts[1:]
         setattr(project, option.attr_name, value)
     @staticmethod
     def read_and_set_value(value):
@@ -190,7 +189,7 @@ class Gsch2PCBProject(gobject.GObject):
         fp = open(fromfile, 'rb')
         for line in fp:
             self.lines.append(line)
-            parts = line.strip().split(None, 1)
+            parts = funcs.shell_parse (line)
 
             option_name = None
             if parts:
