@@ -39,8 +39,8 @@ IT_PROG_INTLTOOL(0.35.0)
 
 AC_DEFUN([AC_PYTHON_MODULE],[
     AC_MSG_CHECKING([for python module $1])
-    $PYTHON -c "import $1" > /dev/null 2>&1
-    if test $? -eq 0; then
+    $PYTHON -c "import $1" 2>&1 | grep -q 'ImportError'
+    if test $? -ne 0; then
         AC_MSG_RESULT(yes)
     else
         AC_MSG_RESULT(no)
@@ -132,6 +132,11 @@ for module in gobject gtk gtk.gdk; do
     AC_PYTHON_MODULE($module, t)
 done
 
+AC_ARG_ENABLE([gtk-version-check],
+    AS_HELP_STRING([--disable-gtk-version-check], [Disable GTK+ version check, use it only for non-X environment]))
+
+AS_IF([test "x$enable_gtk_version_check" != "xno"], [
+
 AC_MSG_CHECKING(for gtk+ >= $GTK_WANTVERSION)
 cat > conftest.py <<[EOF
 import sys
@@ -158,6 +163,8 @@ AC_MSG_RESULT($GTK_VERSION)
 if test $haveversion -ne 0; then
   AC_MSG_ERROR([GTK+ >= $GTK_WANTVERSION is required])
 fi
+
+])
 
 #
 #
