@@ -22,7 +22,7 @@ SUBDIRS = po data
 
 bin_SCRIPTS = xgsch2pcb
 
-pkglib_PYTHON = lib/xgsch2pcb/pcbmanager.py \
+python_PYTHON = lib/xgsch2pcb/pcbmanager.py \
  lib/xgsch2pcb/gsch2pcbproject.py \
  lib/xgsch2pcb/gui.py \
  lib/xgsch2pcb/new_project_gui.py \
@@ -30,7 +30,7 @@ pkglib_PYTHON = lib/xgsch2pcb/pcbmanager.py \
  lib/xgsch2pcb/templates.py \
  lib/xgsch2pcb/funcs.py
 
-nodist_pkglib_PYTHON = config.py
+nodist_python_PYTHON = config.py
 
 INTLTOOL_FILES = intltool-extract.in \
                  intltool-merge.in \
@@ -49,6 +49,8 @@ MAINTAINERCLEANFILES = Makefile.in configure config.h.in \
                        $(INTLTOOL_FILES)
 
 templatesdir = @templatesdir@
+pkglibdir = @XDGDATADIR@/xgsch2pcb
+pythondir = $(pkglibdir)
 
 do_subst = sed -e 's,[@]prefix[@],$(prefix),g' \
                -e 's,[@]PYTHON[@],$(PYTHON),g' \
@@ -57,7 +59,7 @@ do_subst = sed -e 's,[@]prefix[@],$(prefix),g' \
 							 -e 's,[@]templatesdir[@],$(templatesdir),g' \
 							 -e 's,[@]PACKAGE[@],$(PACKAGE),g'
 
-all: $(pkglib_PYTHON) $(nodist_pkglib_PYTHON)
+all: $(python_PYTHON) $(nodist_python_PYTHON)
 
 config.py: lib/xgsch2pcb/config.py.in Makefile
 	$(do_subst) < $(srcdir)/lib/xgsch2pcb/config.py.in > $@
