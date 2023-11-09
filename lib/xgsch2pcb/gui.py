@@ -161,6 +161,7 @@ class MonitorWindow(Gtk.Window):
             copyright="University of Cambridge 2006\nxgsch2pcb Contributors 2006-2009 (See ChangeLog)",
             authors=['Peter Brett', 'Peter Clifton', 'Andrey Smirnov'],
             website='http://www.geda-project.org/',
+            license_type=Gtk.License.GPL_2_0,
             translator_credits=_('translator-credits'),
             transient_for=self,
         )
