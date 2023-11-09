@@ -17,18 +17,16 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import commands
-import os
-import string
-import re
+import subprocess, os, string, re
 
 def find_tool_path (tool):
 
-    which = commands.getstatusoutput("which %s" % tool)
-    if which[0]:
+    p = subprocess.Popen(["which", tool], stdout=subprocess.PIPE)
+    stdout, stderr = p.communicate()
+    if p.returncode:
         return None
     
-    return which[1]
+    return stdout.strip()
     
 def rel_path(topath, fromdir=""):
 
@@ -158,13 +156,13 @@ def shell_parse (line):
                 collect += c
 
     if escape:
-        raise ValueError, 'unmatched escape character'
+        raise ValueError('unmatched escape character')
     elif state == 'text':
         parsed.append (collect)
     elif state == 'squote':
-        raise ValueError, 'unmatched single quote'
+        raise ValueError('unmatched single quote')
     elif state == 'dquote':
-        raise ValueError, 'unmatched double quote'
+        raise ValueError('unmatched double quote')
     return parsed
 
 def shell_quote (line):

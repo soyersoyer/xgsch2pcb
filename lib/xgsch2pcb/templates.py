@@ -18,8 +18,7 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import os
-import shutil
+import os, shutil
 
 # xgsch2pcb-specific modules
 import config
@@ -52,7 +51,7 @@ def list_templates():
     try:
         filelist = os.listdir( config.templatesdir )
     except:
-        print "Couldn't list templates directory"
+        print("Couldn't list templates directory")
         return template_list
 
     filelist.sort()
@@ -63,7 +62,7 @@ def list_templates():
             [name, description] = templ.read_description()
             template_list.append( [template, name, description] )
         except:
-            print "Couldn't read a template in dir " + template
+            print("Couldn't read a template in dir " + template)
 
     return template_list
 
@@ -83,7 +82,7 @@ class gsch2pcb_template:
         name = file.readline().strip()
         blank = file.readline()
         if blank != "\n":
-            print "Invalid file format for this template"
+            print("Invalid file format for this template")
             file.close()
         # Join remaining lines in the file to a single string
         description = "".join( file.readlines() )

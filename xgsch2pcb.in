@@ -19,10 +19,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import pygtk
-pygtk.require('2.0')
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
-import sys, gtk, os.path
+import sys, os.path
 
 # The installation prefix is automatically updated by 'make install'
 # xgsch2pcb needs to know its installation prefix in order to find its files
@@ -41,15 +42,11 @@ try:
 except:
     pass
 
-from gui import *
+from gui import MonitorWindow
 
-gtk.window_set_default_icon_name('geda-xgsch2pcb')
-
-if len(sys.argv) > 1:
-    window = MonitorWindow(sys.argv[1])
-else:
-    window = MonitorWindow()
+project = sys.argv[1] if len(sys.argv) > 1 else None
+window = MonitorWindow(project)
+window.set_default_icon_name('geda-xgsch2pcb')
 window.show_all()
 
-gtk.main()
-
+Gtk.main()

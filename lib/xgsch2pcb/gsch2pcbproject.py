@@ -18,9 +18,11 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import os, gobject, funcs
+from gi.repository import GObject
+import os
+import funcs
 
-class Gsch2PCBOption(object):
+class Gsch2PCBOption(GObject.GObject):
     """Gsch2PCBOption - class representing project's option
 
 This class represents single option which can be added to the gsch2pcb's
@@ -41,7 +43,7 @@ function to write option's value to the config and default option's value corres
             value = getattr(project, option.attr_name)
             if value:
                 line = "%s %s\n" % (option.name, funcs.shell_quote (value))
-                save_file.write(line)
+                save_file.write(bytes(line, 'utf-8'))
 
         self.name=kwargs['name']
         self.attr_name=kwargs['attr_name']
@@ -61,12 +63,12 @@ function to write option's value to the config and default option's value corres
         values = getattr(project, option.attr_name)
         if values:
             s = " ".join (map (funcs.shell_quote, values))
-            save_file.write("%s %s\n" % (option.name, s))
+            save_file.write(bytes("%s %s\n" % (option.name, s), 'utf-8'))
     @staticmethod
     def write_if_equal(value):
         def func(option, project, save_file):
             if getattr(project, option.attr_name) == value:
-                save_file.write(option.name + '\n')
+                save_file.write(bytes(option.name + '\n', 'utf-8'))
         return func
 
     # Every read function must have the following signatue:
@@ -99,20 +101,20 @@ this class represents.
         option = Gsch2PCBOption(**kwargs)
         self[option.name] = option
 
-class Gsch2PCBProject(gobject.GObject):
+class Gsch2PCBProject(GObject.GObject):
 
     __gsignals__ = { 'dirty-flag-changed' :
-                            ( gobject.SIGNAL_NO_RECURSE,
-                              gobject.TYPE_NONE,
-                              (gobject.TYPE_BOOLEAN, )),
+                            ( GObject.SignalFlags.NO_RECURSE,
+                              GObject.TYPE_NONE,
+                              (GObject.TYPE_BOOLEAN, )),
                      'page-added' :
-                            ( gobject.SIGNAL_NO_RECURSE,
-                              gobject.TYPE_NONE,
-                              (gobject.TYPE_STRING, )),
+                            ( GObject.SignalFlags.NO_RECURSE,
+                              GObject.TYPE_NONE,
+                              (GObject.TYPE_STRING, )),
                      'page-removed' :
-                            ( gobject.SIGNAL_NO_RECURSE,
-                              gobject.TYPE_NONE,
-                              (gobject.TYPE_STRING, )),
+                            ( GObject.SignalFlags.NO_RECURSE,
+                              GObject.TYPE_NONE,
+                              (GObject.TYPE_STRING, )),
                    }
 
     PREFER_M4_FOOTPRINTS     = 0
@@ -153,7 +155,7 @@ class Gsch2PCBProject(gobject.GObject):
     options.add(name='gnetlist-arg', attr_name='gnetlist_arg')
 
     def __init__(self, filename=None, output_name=None):
-        gobject.GObject.__init__(self)
+        super().__init__()
 
         for _, option in self.options.items():
             setattr(self, option.attr_name, option.default_value)
@@ -184,27 +186,27 @@ class Gsch2PCBProject(gobject.GObject):
         if fromfile == None:
             fromfile = self.filename
         if fromfile == None:
-            raise Exception, 'No filename specified to load'
+            raise Exception('No filename specified to load')
 
-        fp = open(fromfile, 'rb')
-        for line in fp:
-            self.lines.append(line)
-            parts = funcs.shell_parse (line)
+        with open(fromfile, encoding='utf-8') as fp:
+            for line in fp:
+                self.lines.append(line)
+                parts = funcs.shell_parse (line)
 
-            option_name = None
-            if parts:
-                option_name = parts[0]
+                option_name = None
+                if parts:
+                    option_name = parts[0]
 
-            # Skip blank lines and comment lines (like gsch2pcb)
-            if not option_name or option_name in ('#', '/', ';'):
-                pass
-            else:
-                try:
-                    option = self.options[option_name]
-                    option.read_func(option, self, parts)
-                except KeyError:
-                    print 'Warning: Unsupported project file line "%s"' % line.strip()
-        fp.close()
+                # Skip blank lines and comment lines (like gsch2pcb)
+                if not option_name or option_name in ('#', '/', ';'):
+                    pass
+                else:
+                    try:
+                        option = self.options[option_name]
+                        option.read_func(option, self, parts)
+                    except KeyError:
+                        print('Warning: Unsupported project file line "%s"' % line.strip())
+
         if fromfile == self.filename:
             self.set_dirty(False)
 
@@ -212,7 +214,7 @@ class Gsch2PCBProject(gobject.GObject):
         if destfile == None:
             destfile = self.filename
         if destfile == None:
-            raise Exception, 'No filename specified for project'
+            raise Exception('No filename specified for project')
         # Write values of options that were previously found
         # in project file
         fp = open(destfile, 'wb')
@@ -232,9 +234,9 @@ class Gsch2PCBProject(gobject.GObject):
                     option.write_func(option, self, fp)
                     option.emitted = True
                 else:
-                    fp.write(line)
+                    fp.write(bytes(line, 'utf-8'))
             except KeyError:
-                fp.write(line)
+                fp.write(bytes(line, 'utf-8'))
         # Write values of newly added options
         for _, option in self.options.items():
             if not option.emitted:
@@ -257,5 +259,5 @@ class Gsch2PCBProject(gobject.GObject):
             self.emit('page-removed', filename)
             self.set_dirty()
 
-gobject.type_register( Gsch2PCBProject )
+GObject.type_register( Gsch2PCBProject )
 

@@ -17,25 +17,27 @@
 # You should have received a copy of the GNU General Public License along
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
-import gtk, gtk.gdk, gobject
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import GObject, Gtk, Gdk
 
 import config
 
+import os
 import gettext
 t = gettext.translation(config.PACKAGE, config.localedir, fallback=True)
-_ = t.ugettext
+_ = t.gettext
 
 # xgsch2pcb-specific modules
-from templates import *
-from assistant import *
+from templates import list_templates, gsch2pcb_template
+from gsch2pcbproject import Gsch2PCBProject
 
-class NewProjectAssistant(Assistant):
+class NewProjectAssistant(Gtk.Assistant):
 
     __gsignals__ = { 'project-apply' :
-                            ( gobject.SIGNAL_NO_RECURSE,
-                              gobject.TYPE_NONE,
-                              (gobject.TYPE_STRING, )),
+                            ( GObject.SignalFlags.NO_RECURSE,
+                              GObject.TYPE_NONE,
+                              (GObject.TYPE_STRING, )),
                    }
 
     template = None
@@ -59,29 +61,33 @@ class NewProjectAssistant(Assistant):
                                                self.get_projectname() )
 
                 new_project.save(self.get_filename())
-        except IOError, (errno, strerror):
-            md = gtk.MessageDialog(self,
-                                   (gtk.DIALOG_MODAL |
-                                    gtk.DIALOG_DESTROY_WITH_PARENT),
-                                   gtk.MESSAGE_ERROR,
-                                   gtk.BUTTONS_OK )
+        except IOError as err:
+            md = Gtk.MessageDialog(
+                transient_for=self,
+                modal=True, destroy_with_parent=True,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=_('<span weight="bold" size="larger">Could not create project</span>\n\nError %i: %s') % (err.errno, err.strerror),
+                use_markup=True,
+            )
 
-            md.set_markup( _('<span weight="bold" size="larger">Could not create project</span>\n\nError %i: %s') % (errno, strerror) )
             md.show_all()
             md.run()
-            md.hide_all()
+            md.hide()
             return
-        except:
-            md = gtk.MessageDialog(self,
-                                   (gtk.DIALOG_MODAL |
-                                    gtk.DIALOG_DESTROY_WITH_PARENT),
-                                   gtk.MESSAGE_ERROR,
-                                   gtk.BUTTONS_OK )
+        except Exception as err:
+            md = Gtk.MessageDialog(
+                transient_for=self,
+                modal=True, destroy_with_parent=True,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=_('<span weight="bold" size="larger">Could not create project</span>') + "\n\nError: %s" % err,
+                use_markup=True,
+            )
 
-            md.set_markup( _('<span weight="bold" size="larger">Could not create project</span>') )
             md.show_all()
             md.run()
-            md.hide_all()
+            md.hide()
             return
 
         self.emit('project-apply', filename)
@@ -133,38 +139,27 @@ class NewProjectAssistant(Assistant):
         return projectname
 
     def __init__(self, parent):
-        Assistant.__init__(self)
-        self.set_transient_for( parent )
-        self.set_position( gtk.WIN_POS_CENTER_ON_PARENT )
+        super().__init__(transient_for=parent, window_position=Gtk.WindowPosition.CENTER_ON_PARENT)
 
-        # Render a stock "NEW" icon to display on the pages
-        image = self.render_icon( gtk.STOCK_NEW, gtk.ICON_SIZE_DIALOG )
 
         # ====================
         # Choose template page
         # ====================
 
-        page = gtk.VBox()
-        page.set_border_width(12)
-        page.set_spacing(6)
-        label = gtk.Label(_("<b>Choose project template</b>"))
-        label.set_use_markup(True)
-        label.set_alignment(0, 0.5)
-        page.pack_start(label, False, False);
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, border_width=12, spacing=6)
+        label = Gtk.Label(label=_("<b>Choose project template</b>"), use_markup=True, xalign=0)
+        page.pack_start(label, False, False, 0)
 
-        align = gtk.Alignment(0, 0, 1, 1)
-        page.pack_start(align, True, True)
-        align.set_padding(12,12,12,12)
-        options = gtk.VBox()
-        align.add(options)
-        options.set_spacing(6)
-        self.blankradio = gtk.RadioButton(label=_("Blank"))
-        self.templradio = gtk.RadioButton(group=self.blankradio,
+        options = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True, vexpand=True, margin=12, spacing=6)
+        page.pack_start(options, True, True, 0)
+
+        self.blankradio = Gtk.RadioButton(label=_("Blank"))
+        self.templradio = Gtk.RadioButton(group=self.blankradio,
                                           label=_("From template:"))
-        options.pack_start(self.blankradio, False, False)
-        options.pack_start(self.templradio, False, False)
+        options.pack_start(self.blankradio, False, False, 0)
+        options.pack_start(self.templradio, False, False, 0)
 
-        self.templatelist = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_STRING)
+        self.templatelist = Gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING, GObject.TYPE_STRING)
         templates = list_templates()
         for template in templates:
             self.templatelist.append( template )
@@ -173,39 +168,27 @@ class NewProjectAssistant(Assistant):
             self.templradio.set_sensitive(False)
             self.templatelist.append( ['', _("(No templates found)"),''] )
 
-        textrenderer = gtk.CellRendererText()
-        textcol = gtk.TreeViewColumn(None, textrenderer, text=1)
+        textrenderer = Gtk.CellRendererText()
+        textcol = Gtk.TreeViewColumn(None, textrenderer, text=1)
 
-        self.templateview = gtk.TreeView(self.templatelist)
+        self.templateview = Gtk.TreeView(model=self.templatelist, headers_visible=False, sensitive=False)
         self.templateview.append_column(textcol)
-        self.templateview.set_headers_visible(False)
-        self.templateview.set_sensitive(False)
 
-        scrollwin = gtk.ScrolledWindow()
-        scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_ALWAYS)
-        scrollwin.set_shadow_type(gtk.SHADOW_IN)
+        scrollwin = Gtk.ScrolledWindow(
+            hexpand=True, vexpand=True, margin_start=18,
+            shadow_type=Gtk.ShadowType.IN,
+            hscrollbar_policy=Gtk.PolicyType.NEVER, vscrollbar_policy=Gtk.PolicyType.ALWAYS)
         scrollwin.add(self.templateview)
 
-        align = gtk.Alignment(0, 0, 1, 1)
-        align.set_padding(0, 0, 18, 0)
-        align.add(scrollwin)
-        options.pack_start(align, True, True)
+        options.pack_start(scrollwin, True, True, 0)
 
-        self.description = gtk.Label()
-
-        self.description.set_line_wrap(True)
-        self.description.set_alignment(0, 0)
-        self.description.set_padding(18, 0)
-        self.description.set_selectable(True)
-        self.description.set_max_width_chars(0)
-        options.pack_start(self.description, False, False)
+        self.description = Gtk.Label(wrap=True, xalign=0, yalign=0, margin_start=18, selectable=True, max_width_chars=0)
+        options.pack_start(self.description, False, False, 0)
 
         self.append_page(page)
         self.set_page_title(page, _("Create new project"))
 
-        self.set_page_side_image(page,image)
-
-        self.set_page_type(page, ASSISTANT_PAGE_CONTENT)
+        self.set_page_type(page, Gtk.AssistantPageType.CONTENT)
         self.set_page_complete(page, True)
         self.template_page = page
 
@@ -219,50 +202,40 @@ class NewProjectAssistant(Assistant):
         # Choose project filename page
         # ============================
 
-        page = gtk.VBox()
-        page.set_border_width(12)
-        page.set_spacing(6)
-        label = gtk.Label(_("<b>Choose project filename</b>"))
-        label.set_use_markup(True)
-        label.set_alignment(0, 0.5)
-        page.pack_start(label, False, False);
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, border_width=12, spacing=6)
+        label = Gtk.Label(label=_("<b>Choose project filename</b>"), use_markup=True, xalign=0)
+        page.pack_start(label, False, False, 0)
 
-        align = gtk.Alignment(0, 0, 1, 1)
-        page.pack_start(align, True, True)
-        align.set_padding(12,12,12,12)
-
-        options = gtk.VBox()
-        align.add(options)
-
-        table = gtk.Table(2,2)
-        table.set_col_spacings( 6 ) # TODO: Remove magic numbers
-        table.set_row_spacings( 6 ) # TODO: Remove magic numbers
-        label = gtk.Label(_("Project name:"))
-        label.set_alignment(0, 0.5)
-        table.attach(label, 0, 1, 0, 1, gtk.FILL, 0)
-        self.filename = gtk.Entry()
-        table.attach(self.filename, 1, 2, 0, 1, gtk.EXPAND | gtk.FILL, 0)
-        label = gtk.Label(_("Location:"))
-        label.set_alignment(0, 0.5)
-        table.attach(label, 0, 1, 1, 2, gtk.FILL, 0)
+        options = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True, vexpand=True, margin=12)
+        page.pack_start(options, True, True, 0)
+        
+        grid = Gtk.Grid(column_spacing=6, row_spacing=6)
+        label = Gtk.Label(label=_("Project name:"), xalign=0)
+        grid.attach(label, 0, 0, 1, 1)
+        self.filename = Gtk.Entry(hexpand=True)
+        grid.attach(self.filename, 1, 0, 1, 1)
+        label = Gtk.Label(label=_("Location:"), xalign=0)
+        grid.attach(label, 0, 1, 1, 1)
 
         def filebutton_selection_changed_cb(filechooser):
             # Change to the specified location
             os.chdir( self.get_path() )
 
-        self.filebutton = gtk.FileChooserButton(_('Select project location...'))
+        self.filebutton = Gtk.FileChooserButton(
+            title=_('Select project location...'),
+            hexpand=True,
+            local_only=True,
+            action=Gtk.FileChooserAction.SELECT_FOLDER,
+        )
         self.filebutton.connect( "selection-changed", filebutton_selection_changed_cb )
-        self.filebutton.set_local_only(True)
-        self.filebutton.set_action(gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER)
 
-        table.attach(self.filebutton, 1, 2, 1, 2, gtk.FILL | gtk.EXPAND, 0)
+        grid.attach(self.filebutton, 1, 1, 1, 1)
 
-        options.pack_start(table, False, False)
+        options.pack_start(grid, False, False, 0)
 
         self.append_page(page)
         self.set_page_title(page, _("Create new project"))
-        self.set_page_side_image(page,image)
-        self.set_page_type(page, ASSISTANT_PAGE_CONTENT)
+        self.set_page_type(page, Gtk.AssistantPageType.CONTENT)
         self.set_page_complete(page, False)
         self.filename_page = page
 
@@ -276,54 +249,36 @@ class NewProjectAssistant(Assistant):
         # Creation summary
         # ================
 
-        page = gtk.VBox()
-        page.set_border_width(12)
-        page.set_spacing(6)
-        label = gtk.Label(_("<b>Project summary</b>"))
-        label.set_use_markup(True)
-        label.set_alignment(0, 0.5)
-        page.pack_start(label, False, False);
+        page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, border_width=12, spacing=6)
+        label = Gtk.Label(label=_("<b>Project summary</b>"), use_markup=True, xalign=0)
+        page.pack_start(label, False, False, 0)
 
-        align = gtk.Alignment(0, 0, 1, 1)
-        page.pack_start(align, True, True)
-        align.set_padding(12,12,12,12)
+        explanation = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True, vexpand=True, margin=12, valign=Gtk.Align.START)
+        page.pack_start(explanation, True, True, 0)
 
-        explanation = gtk.VBox()
-        align.add(explanation)
+        self.newfiles_frame = Gtk.Frame(
+            label_widget=Gtk.Label(label=_("<b>New files to be created:</b>"), use_markup=True),
+            shadow_type=Gtk.ShadowType.NONE,
+        )
+        explanation.pack_start(self.newfiles_frame, False, False, 0)
 
-        self.newfiles_frame = gtk.Frame(_("<b>New files to be created:</b>"))
-        self.newfiles_frame.get_label_widget().set_use_markup(True)
-        self.newfiles_frame.set_shadow_type(gtk.SHADOW_NONE)
-        explanation.pack_start(self.newfiles_frame, False, False)
+        self.newfiles_list = Gtk.Label(hexpand=True, vexpand=True, xalign=0, margin=12)
+        self.newfiles_frame.add(self.newfiles_list)
 
-        align = gtk.Alignment(0, 0, 1, 1)
-        align.set_padding(0,12,12,12)
-        self.newfiles_frame.add(align)
+        self.overwrite_frame = Gtk.Frame(
+            label_widget=Gtk.Label(label=_("<b>The following files would be overwritten:</b>"), use_markup=True),
+            shadow_type=Gtk.ShadowType.NONE,
+        )
+        explanation.pack_start(self.overwrite_frame, False, False, 0)
 
-        self.newfiles_list = gtk.Label()
-        self.newfiles_list.set_alignment(0, 0.5)
-        self.newfiles_list.set_padding(0,12)
-        align.add(self.newfiles_list)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, hexpand=True, vexpand=True, margin_end=12, margin_top=12, margin_bottom=12)   
+        self.overwrite_frame.add(vbox)
 
-        self.overwrite_frame = gtk.Frame(_("<b>The following files would be overwritten:</b>"))
-        self.overwrite_frame.get_label_widget().set_use_markup(True)
-        self.overwrite_frame.set_shadow_type(gtk.SHADOW_NONE)
-        explanation.pack_start(self.overwrite_frame, False, False)
+        self.overwrite_list = Gtk.Label(xalign=0, margin_top=12, margin_bottom=12)
+        vbox.pack_start(self.overwrite_list, False, False, 0)
 
-        align = gtk.Alignment(0, 0, 1, 1)
-        align.set_padding(0,12,12,12)
-        self.overwrite_frame.add(align)
-
-        vbox = gtk.VBox()
-        align.add(vbox)
-
-        self.overwrite_list = gtk.Label()
-        self.overwrite_list.set_alignment(0, 0.5)
-        self.overwrite_list.set_padding(0,12)
-        vbox.pack_start(self.overwrite_list, False, False)
-
-        self.confirm_overwrite = gtk.CheckButton(_("Confirm overwrite"))
-        vbox.pack_start(self.confirm_overwrite, False, False)
+        self.confirm_overwrite = Gtk.CheckButton(label=_("Confirm overwrite"))
+        vbox.pack_start(self.confirm_overwrite, False, False, 0)
 
         def confirm_overwrite_toggled_cb( togglebutton ):
             confirmed = togglebutton.get_active()
@@ -333,8 +288,7 @@ class NewProjectAssistant(Assistant):
 
         self.append_page(page)
         self.set_page_title(page, _("Create new project"))
-        self.set_page_side_image(page,image)
-        self.set_page_type(page, ASSISTANT_PAGE_CONFIRM)
+        self.set_page_type(page, Gtk.AssistantPageType.CONFIRM)
         self.summary_page = page
 
 
@@ -362,14 +316,14 @@ class NewProjectAssistant(Assistant):
 
                 no_newfiles = (newfiles_list == [])
                 if no_newfiles:
-                    self.newfiles_frame.hide_all()
+                    self.newfiles_frame.hide()
                 else:
                     self.newfiles_frame.show_all()
 
                 no_overwrite = (overwrite_list == [])
                 if no_overwrite:
                     # No files will be overwritten, we are done
-                    self.overwrite_frame.hide_all()
+                    self.overwrite_frame.hide()
                     self.set_page_complete(self.summary_page, True)
                 else:
                     # Need confirmation before overwriting files
@@ -383,4 +337,4 @@ class NewProjectAssistant(Assistant):
         self.connect('close',   self.assistant_close  )
 
 
-gobject.type_register( NewProjectAssistant )
+GObject.type_register( NewProjectAssistant )

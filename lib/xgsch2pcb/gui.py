@@ -18,16 +18,18 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import gtk, gtk.gdk, gobject, os, sys, commands, shutil
-from stat import *
-from subprocess import *
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk, Gdk, GObject
 
-import config
+import os, sys, shutil
+
+import config, funcs
 
 # i18n
 import gettext
 t = gettext.translation(config.PACKAGE, config.localedir, fallback=True)
-_ = t.ugettext
+_ = t.gettext
 
 # xgsch2pcb-specific modules
 from funcs import *
@@ -41,25 +43,22 @@ except:
     # We won't be able to launch URLs
     pass
 
-class MonitorWindow(gtk.Window):
+class MonitorWindow(Gtk.Window):
 
     # ======================================================================== #
     # Initialisers
     # ======================================================================== #
     
-    def __init__(self, project=None):
-        gtk.Window.__init__(self)
+    def __init__(self, project=None, **kvargs):
+        super().__init__(title="xgsch2pcb", width_request=400, height_request=300, events=Gdk.EventMask.FOCUS_CHANGE_MASK, **kvargs)
 
         self.project = None
         self.pcbmanager = None
 
-        self.set_title("xgsch2pcb")
-        self.set_size_request(400,300)
-        self.set_events(gtk.gdk.FOCUS_CHANGE_MASK)
         self.connect("focus-in-event", self.event_focused)
         self.connect("delete_event", self.event_delete)
 
-        mainvbox = gtk.VBox(False, 5)
+        mainvbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
         self.add(mainvbox)
 
         # Initialize toolbar
@@ -68,72 +67,55 @@ class MonitorWindow(gtk.Window):
         # Hbox contains two vboxes, one for page editing widgets, one
         # for layout editing widgets
         
-        hbox = gtk.HBox(True, 5)
-        mainvbox.pack_start(hbox)
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, homogeneous=True, spacing=5, margin=5)
+        mainvbox.pack_start(hbox, True, True, 0)
 
         # Page editing widgets
         # --------------------
-        frame = gtk.Frame(_("Schematic pages"))
-        frame.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        frame = Gtk.Frame(label=_("Schematic pages"), shadow_type=Gtk.ShadowType.ETCHED_IN)
         hbox.add(frame)
 
-        vbox = gtk.VBox(False, 3)
-        vbox.set_border_width(5)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3, border_width=5)
         frame.add(vbox)
 
-        scrollwin = gtk.ScrolledWindow()
-        scrollwin.set_policy (gtk.POLICY_AUTOMATIC,
-                              gtk.POLICY_AUTOMATIC)
-        vbox.pack_start(scrollwin, True, True)
+        scrollwin = Gtk.ScrolledWindow(shadow_type=Gtk.ShadowType.ETCHED_IN, hscrollbar_policy=Gtk.PolicyType.AUTOMATIC, vscrollbar_policy=Gtk.PolicyType.AUTOMATIC)
+        vbox.pack_start(scrollwin, True, True, 0)
         
         # Treeview showing available schematic pages
-        self.pagelist = gtk.TreeView(gtk.ListStore(str))
+        self.pagelist = Gtk.TreeView(model=Gtk.ListStore(str), headers_visible=False)
         self.pagelist.connect('row-activated',
                               self.event_pagelist_row_activated)
-        scrollwin.add_with_viewport(self.pagelist)
-        column = gtk.TreeViewColumn(None, gtk.CellRendererText(), text=0)
+        scrollwin.add(self.pagelist)
+        column = Gtk.TreeViewColumn(None, Gtk.CellRendererText(), text=0)
         self.pagelist.append_column(column)
         selection = self.pagelist.get_selection()
-        selection.set_mode(gtk.SELECTION_MULTIPLE)
-        selection.connect('changed',
-                          self.event_pagelist_selection_changed)
-        self.pagelist.set_headers_visible(False)
+        selection.set_mode(Gtk.SelectionMode.MULTIPLE)
+        selection.connect('changed', self.event_pagelist_selection_changed)
         
         # Horizontal box containing 'add page' and 'remove page' buttons
-        addremovebox = gtk.HBox()
-        addremovebox.set_homogeneous(True)
-        vbox.pack_start(addremovebox, False, True)
+        addremovebox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, homogeneous=True)
+        vbox.pack_start(addremovebox, False, True, 0)
 
-        self.addpagebutton = gtk.Button(stock=gtk.STOCK_ADD)
-        addremovebox.pack_start(self.addpagebutton, True, True)
+        self.addpagebutton = Gtk.Button(label="_Add", use_underline=True)
+        addremovebox.pack_start(self.addpagebutton, True, True, 0)
         self.addpagebutton.connect("clicked",
                        self.event_addpage_button_clicked)
         
-        self.removepagebutton = gtk.Button(stock=gtk.STOCK_REMOVE)
+        self.removepagebutton = Gtk.Button(label="_Remove", use_underline=True)
         self.removepagebutton.connect("clicked",
                                       self.event_removepage_button_clicked)
-        addremovebox.pack_start(self.removepagebutton, True, True)
+        addremovebox.pack_start(self.removepagebutton, True, True, 0)
         
         # Buttons to run gschem/gattrib
-        self.editpagebutton = gtk.Button(_("Edit schematic"))
-        vbox.pack_start(self.editpagebutton, False, True)
-
-        # TODO: Is this wanted? The padding seems wrong
-        image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_EDIT,gtk.ICON_SIZE_BUTTON)
-        self.editpagebutton.set_image(image)
+        self.editpagebutton = Gtk.Button(label=_("Edit schematic"))
+        vbox.pack_start(self.editpagebutton, False, True, 0)
 
         self.editpagebutton.connect("clicked",
                        self.event_schematic_button_clicked,
                        "gschem")
 
-        self.attribpagebutton = gtk.Button(_("Edit attributes"))
-        vbox.pack_start(self.attribpagebutton, False, True)
-
-        # TODO: Is this wanted? The padding seems wrong
-        image = gtk.Image()
-        image.set_from_stock(gtk.STOCK_EDIT,gtk.ICON_SIZE_BUTTON)
-        self.attribpagebutton.set_image(image)
+        self.attribpagebutton = Gtk.Button(label=_("Edit attributes"))
+        vbox.pack_start(self.attribpagebutton, False, True, 0)
 
         self.attribpagebutton.connect("clicked",
                        self.event_schematic_button_clicked,
@@ -142,116 +124,97 @@ class MonitorWindow(gtk.Window):
 
         # Layout editing widgets
         # ----------------------
-        frame = gtk.Frame(_("Layout"))
-        frame.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        frame = Gtk.Frame(label=_("Layout"), shadow_type=Gtk.ShadowType.ETCHED_IN)
         hbox.add(frame)
 
-        vbox = gtk.VBox(False, 3)
-        vbox.set_border_width(5)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=3, border_width=5)
         frame.add(vbox)
 
-        self.pcbentry = gtk.Entry()
-        self.pcbentry.set_property('editable', False)
-        vbox.pack_start(self.pcbentry, False, True)
+        self.pcbentry = Gtk.Entry(editable=False)
+        vbox.pack_start(self.pcbentry, False, True, 0)
 
-        self.editpcbbutton = gtk.Button(_("Edit layout"))
-        vbox.pack_start(self.editpcbbutton, False, False)
+        self.editpcbbutton = Gtk.Button(label=_("Edit layout"))
+        vbox.pack_start(self.editpcbbutton, False, False, 0)
         self.editpcbbutton.connect("clicked",
                        self.event_editpcb_button_clicked)
 
-        self.updatepcbbutton = gtk.Button(_("Update layout"))
-        vbox.pack_start(self.updatepcbbutton, False, False)
+        self.updatepcbbutton = Gtk.Button(label=_("Update layout"))
+        vbox.pack_start(self.updatepcbbutton, False, False, 0)
         self.updatepcbbutton.connect("clicked",
                        self.event_updatepcb_button_clicked)
 
         """
-        self.changepcbbutton = gtk.Button(_("Change layout file"))
-        vbox.pack_start(self.changepcbbutton, False, False)
+        self.changepcbbutton = Gtk.Button(label=_("Change layout file"))
+        vbox.pack_start(self.changepcbbutton, False, False, 0)
         self.changepcbbutton.connect("clicked",
                        self.event_changepcb_button_clicked)
         """
 
 
-        def about_url_cb(dialog, link, user_data):
-            try:
-      			    gnomevfs.url_show( link )
-            except:
-                pass
 
         # About dialog
         # ------------
-        self.aboutdialog = gtk.AboutDialog()
-        self.aboutdialog.set_name(_("xgsch2pcb"))
-        self.aboutdialog.set_comments(_("a GUI for gsch2pcb"))
-        self.aboutdialog.set_version(config.VERSION)
-        self.aboutdialog.set_copyright("University of Cambridge 2006\nxgsch2pcb Contributors 2006-2009 (See ChangeLog)")
-        self.aboutdialog.set_authors(['Peter Brett', 'Peter Clifton', 'Andrey Smirnov'])
-        gtk.about_dialog_set_url_hook(about_url_cb, None)
-        self.aboutdialog.set_website('http://www.geda-project.org/')
-        self.aboutdialog.set_translator_credits(_('translator-credits'))
-        self.aboutdialog.set_transient_for( self )
-
+        self.aboutdialog = Gtk.AboutDialog(
+            name=_("xgsch2pcb"),
+            comments=_("a GUI for gsch2pcb"),
+            version=config.VERSION,
+            copyright="University of Cambridge 2006\nxgsch2pcb Contributors 2006-2009 (See ChangeLog)",
+            authors=['Peter Brett', 'Peter Clifton', 'Andrey Smirnov'],
+            website='http://www.geda-project.org/',
+            translator_credits=_('translator-credits'),
+            transient_for=self,
+        )
 
         self.pcbmanager = None
         self.set_project(project)
 
     def __init_toolbar__(self, box):
-        toolbar = gtk.Toolbar()
-        box.pack_start(toolbar, False, True)
+        toolbar = Gtk.Toolbar()
+        box.pack_start(toolbar, False, True, 0)
         self.toolbar_buttons = {}
 
-        button = gtk.ToolButton(gtk.STOCK_QUIT)
-        button.set_tooltip_text(_("Quit"))
+        button = Gtk.ToolButton(icon_name="application-exit", tooltip_text=_("Quit"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_quit_button_clicked)
         self.toolbar_buttons['quit'] = button
 
-        toolbar.insert(gtk.SeparatorToolItem(), -1)
+        toolbar.insert(Gtk.SeparatorToolItem(), -1)
 
-        button = gtk.ToolButton(gtk.STOCK_NEW)
-        button.set_tooltip_text(_("New project"))
+        button = Gtk.ToolButton(icon_name="document-new", tooltip_text=_("New project"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_new_button_clicked)
         self.toolbar_buttons['new'] = button
 
-        button = gtk.ToolButton(gtk.STOCK_OPEN)
-        button.set_tooltip_text(_("Open project"))
+        button = Gtk.ToolButton(icon_name="document-open", tooltip_text=_("Open project"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_open_button_clicked)
         self.toolbar_buttons['open'] = button
 
-        button = gtk.ToolButton(gtk.STOCK_SAVE)
-        button.set_tooltip_text(_("Save project"))
+        button = Gtk.ToolButton(icon_name="document-save", tooltip_text=_("Save project"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_save_button_clicked)
         self.toolbar_buttons['save'] = button
 
-        #button = gtk.ToolButton(gtk.STOCK_SAVE_AS)
-        #button.set_tooltip_text(_("Save project as..."))
+        #button = Gtk.ToolButton(icon_name="document-save-as", tooltip_text=_("Save project as..."))
         #toolbar.insert(button, -1)
         #button.connect("clicked", self.event_saveas_button_clicked)
         #self.toolbar_buttons['saveas'] = button
 
-        button = gtk.ToolButton(gtk.STOCK_CLOSE)
-        button.set_tooltip_text(_("Close project"))
+        button = Gtk.ToolButton(icon_name="window-close", tooltip_text=_("Close project"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_close_button_clicked)
         self.toolbar_buttons['close'] = button
 
-#        toolbar.insert(gtk.SeparatorToolItem(), -1)
+#        toolbar.insert(Gtk.SeparatorToolItem(), -1)
 
-        icon = gtk.Image()
-        icon.set_from_stock(gtk.STOCK_PROPERTIES, toolbar.get_icon_size())
-        button = gtk.ToolButton(icon, _("Options"))
-        button.set_tooltip_text(_("Project options"))
+        button = Gtk.ToolButton(icon_name="document-properties", label=_("Options"), tooltip_text=_("Project options"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_options_button_clicked)
         self.toolbar_buttons['options'] = button
 
-        toolbar.insert(gtk.SeparatorToolItem(), -1)
+        toolbar.insert(Gtk.SeparatorToolItem(), -1)
 
-        button = gtk.ToolButton(gtk.STOCK_ABOUT)
-        button.set_tooltip_text(_("About xgsch2pcb"))
+        button = Gtk.ToolButton(icon_name="help-about", tooltip_text=_("About xgsch2pcb"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_about_button_clicked)
         self.toolbar_buttons['about'] = button
@@ -300,99 +263,94 @@ class MonitorWindow(gtk.Window):
             add_dialog.show_all()
             r = add_dialog.run()
 
-            if r != gtk.RESPONSE_ACCEPT:
+            if r != Gtk.ResponseType.OK:
                 break
 
             from_file = add_dialog.is_from_existing()
             filename = add_dialog.get_filename()
             if filename == None:
-                md = gtk.MessageDialog(self,
-                                       (gtk.DIALOG_MODAL |
-                                        gtk.DIALOG_DESTROY_WITH_PARENT),
-                                       gtk.MESSAGE_ERROR,
-                                       gtk.BUTTONS_OK,
-                                       _('You must select either an existing schematic file or enter a filename for a new file.'))
+                md = Gtk.MessageDialog(
+                    transient_for=self,
+                    modal=True, destroy_with_parent=True,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=_('You must select either an existing schematic file or enter a filename for a new file.'),
+                )
                 md.show_all()
                 md.run()
-                md.hide_all()
+                md.hide()
                 continue
 
             # If the user's specified a schematic that's not in a
             # subdirectory of the project directory, complain.
-            if rel_path(filename).startswith('../'):
-                md = gtk.MessageDialog(self,
-                                       (gtk.DIALOG_MODAL |
-                                        gtk.DIALOG_DESTROY_WITH_PARENT),
-                                       gtk.MESSAGE_WARNING,
-                                       gtk.BUTTONS_NONE)
-
-                md.set_markup(_('<span weight="bold" size="larger">Selected file is outside the project directory\nAdd anyway?</span>\n\nProjects are best kept in self contained directories. Ensure that you don\'t move or delete any external files, or the project will be incomplete.'))
-
-                # Set GUI spacings
-                md.set_border_width( 6 )
+            if funcs.rel_path(filename).startswith('../'):
+                md = Gtk.MessageDialog(
+                    transient_for=self,
+                    modal=True, destroy_with_parent=True,
+                    message_type=Gtk.MessageType.WARNING,
+                    text=_('<span weight="bold" size="larger">Selected file is outside the project directory\nAdd anyway?</span>\n\nProjects are best kept in self contained directories. Ensure that you don\'t move or delete any external files, or the project will be incomplete.'),
+                    use_markup=True,   
+                    border_width=6                 
+                )
                 md.vbox.set_spacing( 12 )
-                #md.hbox.border_width( 6 )
-                #md.hbox.set_spacing( 12 )
 
-                md.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT)
-                button = gtk.Button(_("_Add anyway"))
-                image = gtk.Image()
-                image.set_from_stock( gtk.STOCK_ADD, gtk.ICON_SIZE_BUTTON )
-                button.set_image( image )
-                md.add_action_widget(button, gtk.RESPONSE_ACCEPT)
+                md.add_button('_Cancel', Gtk.ResponseType.CANCEL)
+                md.add_button(_("_Add anyway"), Gtk.ResponseType.OK)
 
                 md.show_all()
                 r = md.run()
-                md.hide_all()
+                md.hide()
                 
-                if r != gtk.RESPONSE_ACCEPT:
+                if r != Gtk.ResponseType.OK:
                     continue
 
-            filename = rel_path(filename)
+            filename = funcs.rel_path(filename)
 
             if not os.path.exists(filename):
                 # Create a new zero-length file in place
                 try:
                     open(filename, 'w').close()
-                except IOError, (errno, strerror):
-                    md = gtk.MessageDialog(self,
-                                           (gtk.DIALOG_MODAL |
-                                            gtk.DIALOG_DESTROY_WITH_PARENT),
-                                           gtk.MESSAGE_ERROR,
-                                           gtk.BUTTONS_OK )
-
-                    md.set_markup( _('<span weight="bold" size="larger">Could not create schematic</span>\n\nError %i: %s') % (errno, strerror) )
+                except IOError as err:
+                    md = Gtk.MessageDialog(
+                        transient_for=self,
+                        modal=True, destroy_with_parent=True,
+                        message_type=Gtk.MessageType.ERROR,
+                        buttons=Gtk.ButtonsType.OK,
+                        text=_('<span weight="bold" size="larger">Could not create schematic</span>\n\nError %i: %s') % (err.errno, err.strerror),
+                        use_markup=True,
+                    )
                     md.show_all()
                     md.run()
-                    md.hide_all()
+                    md.hide()
                     continue
                 except:
                     #TODO: Provide a GUI Dialog for this
-                    md = gtk.MessageDialog(self,
-                                           (gtk.DIALOG_MODAL |
-                                            gtk.DIALOG_DESTROY_WITH_PARENT),
-                                           gtk.MESSAGE_ERROR,
-                                           gtk.BUTTONS_OK )
-
-                    md.set_markup( _('<span weight="bold" size="larger">Could not create schematic</span>') )
+                    md = Gtk.MessageDialog(
+                        transient_for=self,
+                        modal=True, destroy_with_parent=True,
+                        message_type=Gtk.MessageType.ERROR,
+                        buttons=Gtk.ButtonsType.OK,
+                        text=_('<span weight="bold" size="larger">Could not create schematic</span>'),
+                        use_markup=True,
+                    )
                     md.show_all()
                     md.run()
-                    md.hide_all()
+                    md.hide()
                     continue
 
             self.project.add_page(filename)
             break
 
-        add_dialog.hide_all()
+        add_dialog.hide()
 
 
     def event_removepage_button_clicked(self, button):
         # Because we're modifying the treeview at the same time as
         # reading from it, we need to make a list of
-        # gtk.TreeRowReferences (which are persistent over
+        # Gtk.TreeRowReferences (which are persistent over
         # modification of a treemodel) and then iterate over that.
         (model, paths) = self.pagelist.get_selection().get_selected_rows()
-        refs = map(gtk.TreeRowReference, [model]*len(paths), paths)
+        refs = map(Gtk.TreeRowReference, [model]*len(paths), paths)
         for ref in refs:
             page = model.get_value(model.get_iter(ref.get_path()), 0)
             self.project.remove_page(page)
@@ -409,20 +367,21 @@ class MonitorWindow(gtk.Window):
 
         # Launch the requested tool
         # FIXME does this work for gattrib?
-        toolpath = find_tool_path(tool)
+        toolpath = funcs.find_tool_path(tool)
         if toolpath == None:
-            md = gtk.MessageDialog(self,
-                                   (gtk.DIALOG_MODAL |
-                                    gtk.DIALOG_DESTROY_WITH_PARENT),
-                                   gtk.MESSAGE_ERROR,
-                                   gtk.BUTTONS_OK,
-                                   _('Could not locate tool: %s') % tool)
+            md = Gtk.MessageDialog(
+                transient_for=self,
+                modal=True, destroy_with_parent=True,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                text=_('Could not locate tool: %s') % tool,
+            )
             md.show_all()
             md.run()
-            md.hide_all()
+            md.hide()
             return
-        
-        Popen([toolpath] + pages)
+
+        subprocess.Popen([toolpath] + pages)
             
     def event_editpcb_button_clicked(self, button):
         
@@ -430,17 +389,18 @@ class MonitorWindow(gtk.Window):
         if self.pcbmanager.needs_updating( self.project.pages ):
         
             # Ask if the user wants to update the layout
-            d = gtk.MessageDialog(self,
-                                  (gtk.DIALOG_MODAL | 
-                                   gtk.DIALOG_DESTROY_WITH_PARENT),
-                                  gtk.MESSAGE_QUESTION,
-                                  gtk.BUTTONS_NONE,
-                                  _("Your schematic has changed.\n\nWould you like to update your PCB layout?"))
-            d.add_buttons(_("Leave layout unchanged"), gtk.RESPONSE_REJECT,
-                          _("Update layout"), gtk.RESPONSE_ACCEPT)
+            d = Gtk.MessageDialog(
+                transient_for=self,
+                modal=True, destroy_with_parent=True,
+                message_type=Gtk.MessageType.QUESTION,
+                buttons=Gtk.ButtonsType.NONE,
+                text=_("Your schematic has changed.\n\nWould you like to update your PCB layout?")
+            )
+            d.add_button(_("Leave layout unchanged"), Gtk.ResponseType.CANCEL)
+            d.add_button(_("Update layout"), Gtk.ResponseType.YES)
             d.show_all()
-            do_update = (d.run() == gtk.RESPONSE_ACCEPT)
-            d.hide_all()
+            do_update = (d.run() == Gtk.ResponseType.YES)
+            d.hide()
 
             if do_update:
                 # Update the layout (leaving PCB open)
@@ -458,15 +418,17 @@ class MonitorWindow(gtk.Window):
     """
     def event_changepcb_button_clicked(self, button):
 
-        d = gtk.MessageDialog(self,
-                              (gtk.DIALOG_MODAL | 
-                               gtk.DIALOG_DESTROY_WITH_PARENT),
-                              gtk.MESSAGE_INFO,
-                              gtk.BUTTONS_OK)
-        d.set_markup(_('<span weight="bold" size="larger">Unimplemented feature</span>\n\nRenaming the layout file not implemented'))
+        d = Gtk.MessageDialog(
+            transient_for=self,
+            modal=True, destroy_with_parent=True,
+            message_type=Gtk.MessageType.INFO,
+            buttons=Gtk.ButtonsType.OK,
+            text=_('<span weight="bold" size="larger">Unimplemented feature</span>\n\nRenaming the layout file not implemented'),
+            use_markup=True,
+        )
         d.show_all()
         d.run()
-        d.hide_all()
+        d.hide()
     """
 
 
@@ -491,23 +453,25 @@ class MonitorWindow(gtk.Window):
         if self.check_no_tools( reason ):
             return
 
-        filter = gtk.FileFilter()
+        filter = Gtk.FileFilter()
         filter.add_pattern('*.gsch2pcb')
         
-        fcd = gtk.FileChooserDialog(_('Open Project...'), self,
-                                    gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                                    (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                                     gtk.STOCK_OPEN, gtk.RESPONSE_ACCEPT))
-        fcd.set_show_hidden (False)
-        fcd.set_filter (filter)
-        fcd.set_action (gtk.FILE_CHOOSER_ACTION_OPEN)
-        fcd.set_local_only (True)
-
+        fcd = Gtk.FileChooserDialog(
+            title=_('Open Project...'),
+            transient_for=self,
+            modal=True, destroy_with_parent=True,
+            show_hidden=False,
+            filter=filter,
+            action=Gtk.FileChooserAction.OPEN,
+            local_only=True,
+        )
+        fcd.add_button("_Cancel", Gtk.ResponseType.CANCEL)
+        fcd.add_button("_Open", Gtk.ResponseType.OK)
         fcd.show_all()
         r = fcd.run()
-        fcd.hide_all()
+        fcd.hide()
 
-        if r != gtk.RESPONSE_ACCEPT:
+        if r != Gtk.ResponseType.OK:
             return
         
         filename = fcd.get_filename()
@@ -533,13 +497,11 @@ class MonitorWindow(gtk.Window):
         self.handle_quit()
 
     def event_options_button_clicked(self, button):
-        options_dialog = ProjectOptionsDialog( self )
-        options_dialog.set_name(_("Options dialog"))
-        options_dialog.set_transient_for( self )
+        options_dialog = ProjectOptionsDialog(parent=self, name=_("Options dialog"))
 
         options_dialog.show_all()
         options_dialog.run()
-        options_dialog.hide_all()
+        options_dialog.hide()
 
         self.project.elements_dir = []
         options_dialog.path_chooser.path_model.foreach(
@@ -555,7 +517,7 @@ class MonitorWindow(gtk.Window):
     def event_about_button_clicked(self, button):
         self.aboutdialog.show_all()
         self.aboutdialog.run()
-        self.aboutdialog.hide_all()
+        self.aboutdialog.hide()
 
     def event_focused(self, window, direction):
         self.set_pcbsensitivities()
@@ -623,7 +585,7 @@ class MonitorWindow(gtk.Window):
     def handle_quit (self):
         if self.close_project( _("exiting") ):
             return True
-        gtk.main_quit()
+        Gtk.main_quit()
 
 
     def set_project(self, filename):
@@ -648,23 +610,24 @@ class MonitorWindow(gtk.Window):
                                  self.event_project_page_removed)
 
             # TODO FIXME mangle for i18n support
-            self.pcbentry.set_text(rel_path(self.project.output_name + ".pcb"))
+            self.pcbentry.set_text(funcs.rel_path(self.project.output_name + ".pcb"))
 
             try:
                 self.pcbmanager = PCBManager(self.project)
             # TODO: Subclass Exception to be more specific in PCBManager
-            except Exception, (instance):
+            except Exception as instance:
                 message = str( instance )
-                md = gtk.MessageDialog(self,
-                                       (gtk.DIALOG_MODAL |
-                                        gtk.DIALOG_DESTROY_WITH_PARENT),
-                                       gtk.MESSAGE_ERROR,
-                                       gtk.BUTTONS_OK )
-
-                md.set_markup( _('<span weight="bold" size="larger">Problem initialising</span>\n%s') % message )
+                md = Gtk.MessageDialog(
+                    transient_for=self,
+                    modal=True, destroy_with_parent=True,
+                    message_type=Gtk.MessageType.ERROR,
+                    buttons=Gtk.ButtonsType.OK,
+                    text=_('<span weight="bold" size="larger">Problem initialising</span>\n%s') % message,
+                    use_markup=True,
+                )
                 md.show_all()
                 md.run()
-                md.hide_all()
+                md.hide()
             
         # TODO set model for self.pagelist
         pagelistmodel = self.pagelist.get_model()
@@ -691,11 +654,13 @@ class MonitorWindow(gtk.Window):
 
         # If the layout is still open, don't allow the project to close
         if self.pcbmanager and self.pcbmanager.is_layout_open():
-            d = gtk.MessageDialog(self,
-                              (gtk.DIALOG_MODAL | 
-                               gtk.DIALOG_DESTROY_WITH_PARENT),
-                              gtk.MESSAGE_ERROR,
-                              gtk.BUTTONS_OK)
+            d = Gtk.MessageDialog(
+                transient_for=self,
+                modal=True, destroy_with_parent=True,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                border_width=6,
+            )
             if reason:
                 d.set_markup( 
                     _('<span weight="bold" size="larger">Layout editor still open</span>\n\nClose the layout editor before %s.') % reason)
@@ -703,12 +668,10 @@ class MonitorWindow(gtk.Window):
                 d.set_markup( 
                     _('<span weight="bold" size="larger">Layout editor still open</span>\n\nClose the layout editor first.'))
                
-            # Set GUI spacings
-            d.set_border_width( 6 )
             d.vbox.set_spacing( 12 )
             d.show_all()
             d.run()
-            d.hide_all()
+            d.hide()
 
             return True
 
@@ -721,11 +684,13 @@ class MonitorWindow(gtk.Window):
         
         # If the layout is still open, don't allow the project to close
         if self.pcbmanager and self.pcbmanager.is_layout_open():
-            d = gtk.MessageDialog(self,
-                              (gtk.DIALOG_MODAL | 
-                               gtk.DIALOG_DESTROY_WITH_PARENT),
-                              gtk.MESSAGE_ERROR,
-                              gtk.BUTTONS_OK)
+            d = Gtk.MessageDialog(
+                transient_for=self,
+                modal=True, destroy_with_parent=True,
+                message_type=Gtk.MessageType.ERROR,
+                buttons=Gtk.ButtonsType.OK,
+                border_width=6,
+            )
             if reason:
                 d.set_markup( 
                     _('<span weight="bold" size="larger">Layout editor still open</span>\n\nClose the layout editor before %s.') % reason)
@@ -733,12 +698,10 @@ class MonitorWindow(gtk.Window):
                 d.set_markup( 
                     _('<span weight="bold" size="larger">Layout editor still open</span>\n\nClose the layout editor first.'))
                
-            # Set GUI spacings
-            d.set_border_width( 6 )
             d.vbox.set_spacing( 12 )
             d.show_all()
             d.run()
-            d.hide_all()
+            d.hide()
 
             return True
 
@@ -750,31 +713,32 @@ class MonitorWindow(gtk.Window):
         self.pcbmanager = None
 
         if self.project and self.project.dirty:
-            md = gtk.MessageDialog(self,
-                                   (gtk.DIALOG_MODAL |
-                                    gtk.DIALOG_DESTROY_WITH_PARENT),
-                                   gtk.MESSAGE_WARNING,
-                                   gtk.BUTTONS_NONE)
+            md = Gtk.MessageDialog(
+                transient_for=self,
+                modal=True, destroy_with_parent=True,
+                message_type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.NONE,
+                text=_('<span weight="bold" size="larger">Save the changes to project "%s" before closing?</span>\n\nAny changes made since the last save will be lost.') % self.project.filename,
+                use_markup=True,
+                border_width=6,
+            )
 
-            md.set_markup(_('<span weight="bold" size="larger">Save the changes to project "%s" before closing?</span>\n\nAny changes made since the last save will be lost.') % self.project.filename)
-
-            # Set GUI spacings
-            md.set_border_width( 6 )
             md.vbox.set_spacing( 12 )
-            md.add_buttons( _("Close _without Saving"), gtk.RESPONSE_CLOSE,
-                                      gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                      gtk.STOCK_SAVE, gtk.RESPONSE_OK )
+            md.add_button( _("Close _without Saving"), Gtk.ResponseType.CLOSE)
+            md.add_button("_Cancel", Gtk.ResponseType.CANCEL)
+            md.add_button("_Save", Gtk.ResponseType.OK)
+
             md.show_all()
             r = md.run()
-            md.hide_all()
-            if r == gtk.RESPONSE_OK:
+            md.hide()
+            if r == Gtk.ResponseType.OK:
                 # TODO: Need to attempt a save, possibly using a save box
                 # if the save is cancelled, we must also cancel the close
 
                 # Save the project
                 self.project.save()
 
-            elif r != gtk.RESPONSE_CLOSE:
+            elif r != Gtk.ResponseType.CLOSE:
                 # User doesn't cancelled the dialog
                 return True
 
@@ -794,91 +758,71 @@ class MonitorWindow(gtk.Window):
             for [ refdes, footprint ] in unfound:
                 results_string = results_string + '\n  ' + refdes + ' (footprint=' + footprint + ')'
 
-            md = gtk.MessageDialog(self,
-                                   (gtk.DIALOG_MODAL |
-                                    gtk.DIALOG_DESTROY_WITH_PARENT),
-                                   gtk.MESSAGE_WARNING,
-                                   gtk.BUTTONS_OK)
+            md = Gtk.MessageDialog(
+                transient_for=self,
+                modal=True, destroy_with_parent=True,
+                message_type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.OK,
+                text=results_string,
+                use_markup=True,
+                border_width=6,
+            )
 
-            md.set_markup( results_string )
-
-            # Set GUI spacings
-            md.set_border_width( 6 )
             md.vbox.set_spacing( 12 )
-            #md.hbox.border_width( 6 )
-            #md.hbox.set_spacing( 12 )
 
             md.show_all()
             md.run()
-            md.hide_all()
+            md.hide()
 
 
-gobject.type_register( MonitorWindow )
+GObject.type_register( MonitorWindow )
 
-class AddPageDialog(gtk.Dialog):
+class AddPageDialog(Gtk.Dialog):
     def __init__(self, parent, defaultfilename="untitled.sch"):
-        gtk.Dialog.__init__(self, _('Add schematic page...'), parent,
-                            (gtk.DIALOG_MODAL |
-                             gtk.DIALOG_DESTROY_WITH_PARENT),
-                            (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                             gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
-        self.set_position( gtk.WIN_POS_CENTER_ON_PARENT )
+        super().__init__(
+            title=_('Add schematic page...'),
+            transient_for=parent,
+            modal=True, destroy_with_parent=True,
+            window_position=Gtk.WindowPosition.CENTER_ON_PARENT,
+            border_width=0,
+        )
+        self.add_button('_Cancel', Gtk.ResponseType.CANCEL)
+        self.add_button('_OK', Gtk.ResponseType.OK)
 
-        table = gtk.Table(2,2)
-        
-        # GUI Spacing
-        self.set_has_separator( False )
-        self.set_border_width( 0 )
-        table.set_row_spacings( 6 )
-        
-        # GUI Spacing
-        alignment = gtk.Alignment( 0, 0, 0, 0 )
-        alignment.set_padding( 12, 18, 6, 6 )
-        alignment.add( table )
-        
-        self.vbox.pack_start( alignment )
+        grid = Gtk.Grid(row_spacing=6, margin_top=12, margin_bottom=18, margin_start=6, margin_end=6)
+        self.vbox.pack_start( grid , False, False, 0)
 
         # Two radio buttons allow you to select whether to use an
         # existing file or create a new file
-        self.fileradio = gtk.RadioButton(label=_('From file:'))
+        self.fileradio = Gtk.RadioButton(label=_('From file:'), margin_end=12, active=True)
         self.fileradio.connect('toggled', self.event_radio_toggled)
-        
-        # GUI Spacing
-        alignment = gtk.Alignment( 0, 0, 0, 0 )
-        alignment.set_padding( 0, 0, 0, 12 )
-        alignment.add( self.fileradio )
 
-        table.attach(alignment, 0, 1, 0, 1, gtk.FILL, 0)
+        grid.attach(self.fileradio, 0, 0, 1, 1)
 
-        self.newradio = gtk.RadioButton(self.fileradio, _('Create new:'))
+        self.newradio = Gtk.RadioButton(label=_('Create new:'), group=self.fileradio, margin_end=12)
         self.newradio.connect('toggled', self.event_radio_toggled)
-        
-        # GUI Spacing
-        alignment = gtk.Alignment( 0, 0, 0, 0 )
-        alignment.set_padding( 0, 0, 0, 12 )
-        alignment.add( self.newradio )
 
-        table.attach(alignment, 0, 1, 1, 2, gtk.FILL, 0)
+        grid.attach(self.newradio, 0, 1, 1, 1)
 
         # File chooser button to select and existing file.  Currently
         # limited to local files 'cos gsch2pcb can't handle remote
         # files.
-        self.filebutton = gtk.FileChooserButton(_('Select schematic page...'))
-        self.filebutton.connect( "selection-changed", self.event_filebutton_selection_changed )
-        self.filebutton.set_local_only(True)
-        self.filebutton.set_action(gtk.FILE_CHOOSER_ACTION_OPEN)
-        schfilter = gtk.FileFilter()
+        schfilter = Gtk.FileFilter()
         schfilter.add_pattern('*.sch')
-        self.filebutton.set_filter(schfilter)
-        table.attach(self.filebutton, 1, 2, 0, 1, gtk.FILL | gtk.EXPAND, 0)
+        self.filebutton = Gtk.FileChooserButton(
+            title=_('Select schematic page...'),
+            filter=schfilter,
+            local_only=True,
+            action=Gtk.FileChooserAction.OPEN,
+        )
+        self.filebutton.connect( "selection-changed", self.event_filebutton_selection_changed )
+        grid.attach(self.filebutton, 1, 0, 1, 1)
 
         # Text entry field to enter the filename of a new schematic
         # page to create
-        self.newentry = gtk.Entry()
-        self.newentry.set_text(defaultfilename)
-        table.attach(self.newentry, 1, 2, 1, 2, gtk.FILL | gtk.EXPAND, 0)
+        self.newentry = Gtk.Entry(text=defaultfilename)
+        grid.attach(self.newentry, 1, 1, 1, 2)
 
-        self.fileradio.set_active(True)
         self.fileradio.emit('toggled')
 
         # TODO: Get bug fixed in GTK+, or find proper solution
@@ -905,7 +849,7 @@ class AddPageDialog(gtk.Dialog):
 
         self.last_filename = filename
 
-        self.response( gtk.RESPONSE_ACCEPT )
+        self.response( Gtk.ResponseType.OK )
         
     
     def event_radio_toggled(self, button):
@@ -922,76 +866,9 @@ class AddPageDialog(gtk.Dialog):
         else:
             return self.newentry.get_text()
 
-gobject.type_register ( AddPageDialog )
+GObject.type_register ( AddPageDialog )
 
-# TODO: Need a mechanism to open a new project as a "NEW" project, when a
-#       project with that filename already exists on disk. This is for
-#       over-writing an existing project of the same name.
-
-class NewProjectDialog(gtk.FileChooserDialog):
-    def __init__(self, parent):
-        gtk.FileChooserDialog.__init__(self, _('New project...'), parent,
-                            gtk.FILE_CHOOSER_ACTION_SAVE,
-                            (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                             gtk.STOCK_NEW, gtk.RESPONSE_ACCEPT))
-        
-        # TODO: Might add a more complex interface for a generic project manager
-
-        # TODO: Decide if this is worth the high dependancy of PyGTK 2.8+
-        self.set_do_overwrite_confirmation( True )
-
-        # TODO: Decide if this is worth the high dependancy of PyGTK 2.8+
-        self.connect( "confirm-overwrite", self.signal_confirm_overwrite )
-
-	filter = gtk.FileFilter()
-        filter.add_pattern('*.gsch2pcb')
-        self.set_filter(filter)
-
-    
-    # TODO: Decide if this is worth the high dependancy of PyGTK 2.8+
-    # TODO: Implement a dialog to prompt about
-    #       over-writing an existing project
-    def signal_confirm_overwrite( self, filechooser ):
-        
-        md = gtk.MessageDialog(self,
-                               (gtk.DIALOG_MODAL |
-                                gtk.DIALOG_DESTROY_WITH_PARENT),
-                               gtk.MESSAGE_WARNING,
-                               gtk.BUTTONS_NONE)
-
-        # TODO: Split to just give the filename
-        filename = self.get_filename()
-        dirname = self.get_current_folder()
-
-        md.set_markup(_('<span weight="bold" size="larger">A project named "%s" already exists. Do you want to replace it?</span>\n\nThe project already exists in directory "%s". Replacing it will overwrite its contents.') % ( filename, dirname ))
-
-        # Set GUI spacings
-        md.set_border_width( 6 )
-        md.vbox.set_spacing( 12 )
-        #md.hbox.border_width( 6 )
-        #md.hbox.set_spacing( 12 )
-
-        md.add_buttons(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT)
-        
-        button = gtk.Button( _("_Replace") )
-        image = gtk.Image()
-        image.set_from_stock( gtk.STOCK_SAVE_AS, gtk.ICON_SIZE_BUTTON )
-        button.set_image( image )
-        md.add_action_widget(button, gtk.RESPONSE_ACCEPT)
-
-        md.show_all()
-        r = md.run()
-        md.hide_all()
-        
-        if r != gtk.RESPONSE_ACCEPT:
-            return gtk.FILE_CHOOSER_CONFIRMATION_SELECT_AGAIN
-        
-        return gtk.FILE_CHOOSER_CONFIRMATION_ACCEPT_FILENAME
-
-gobject.type_register( NewProjectDialog )
-
-
-class PathChooser(gtk.VBox):
+class PathChooser(Gtk.Box):
     def remove_clicked_cb(self, button, treeview):
         [model, iter] = treeview.get_selection().get_selected()
 
@@ -1001,15 +878,17 @@ class PathChooser(gtk.VBox):
         model.remove(iter)
 
     def add_clicked_cb(self, button, pathmodel):
-        filedialog = gtk.FileChooserDialog(action=gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
-                                           buttons= (gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
-                                                     gtk.STOCK_ADD, gtk.RESPONSE_ACCEPT))
+        filedialog = Gtk.FileChooserDialog(
+            action=Gtk.FileChooserAction.SELECT_FOLDER,
+        )
+        filedialog.add_button("_Cancel", Gtk.ResponseType.CANCEL)
+        filedialog.add_button("_Add", Gtk.ResponseType.OK)
 
         filedialog.show_all()
         response = filedialog.run()
-        filedialog.hide_all()
+        filedialog.hide()
 
-        if response == gtk.RESPONSE_ACCEPT:
+        if response == Gtk.ResponseType.OK:
             for path in filedialog.get_filenames():
                 it   = pathmodel.get_iter_first()
                 unique = True
@@ -1028,175 +907,124 @@ class PathChooser(gtk.VBox):
         self.remove_button.set_sensitive(True if iter else False)
 
 
-    def __init__(self, directories):
-        gtk.VBox.__init__(self, False, 0)
+    def __init__(self, directories, **kwargs):
+        super().__init__(orientation=Gtk.Orientation.VERTICAL, spacing=6, **kwargs)
 
-        # GUI Spacing
-        self.set_spacing(6)
+        frame = Gtk.Frame(shadow_type=Gtk.ShadowType.IN)
+        self.pack_start(frame, True, True, 0)
 
-        frame = gtk.Frame()
-        frame.set_shadow_type(gtk.SHADOW_IN)
-        self.pack_start(frame, True, True)
-
-        hbox = gtk.HBox()
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         frame.add(hbox)
 
-        pathmodel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
+        pathmodel = Gtk.ListStore(GObject.TYPE_STRING, GObject.TYPE_STRING)
         for path in directories:
             pathmodel.append([path, "black"])
         self.path_model = pathmodel
 
-        treeview = gtk.TreeView(pathmodel)
-        hbox.pack_start(treeview, True, True)
+        scrollbar = Gtk.Scrollbar(orientation=Gtk.Orientation.VERTICAL)
+        treeview = Gtk.TreeView(
+            model=pathmodel,
+            headers_visible=False,
+            height_request=1, width_request=1,
+            vadjustment=scrollbar.get_adjustment(),
+        )
+        hbox.pack_start(treeview, True, True, 0)
+        hbox.pack_start(scrollbar, False, True, 0)
 
-        scrollbar = gtk.VScrollbar()
-        hbox.pack_start(scrollbar, False, True)
-
-        renderer = gtk.CellRendererText()
+        renderer = Gtk.CellRendererText()
         treeview.insert_column_with_attributes(0, "", renderer, text=0, foreground=1)
-        treeview.set_headers_visible(False)
 
-        treeview.set_vadjustment(scrollbar.get_adjustment())
-        treeview.set_headers_visible(False)
-        treeview.set_size_request(1,1)
+        hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=6)
+        self.pack_start(hbox, False, True, 0)
 
-        hbox = gtk.HBox()
-        self.pack_start(hbox, False, True)
+        self.add_button = Gtk.Button(image=Gtk.Image(icon_name="list-add", icon_size=Gtk.IconSize.BUTTON))
+        hbox.pack_start(self.add_button, False, True, 0)
 
-        # GUI Spacing
-        hbox.set_spacing(6)
-
-        addbutton = gtk.Button(stock=gtk.STOCK_ADD)
-        hbox.pack_start(addbutton, False, True)
-        self.add_button = addbutton
-
-        removebutton = gtk.Button(stock=gtk.STOCK_REMOVE)
-        removebutton.set_sensitive(False)
-        hbox.pack_start(removebutton, False, True)
-        self.remove_button = removebutton
+        self.remove_button = Gtk.Button(image=Gtk.Image(icon_name="list-remove", icon_size=Gtk.IconSize.BUTTON), sensitive=False)
+        hbox.pack_start(self.remove_button, False, True, 0)
 
 
         treeview.get_selection().connect("changed", self.selection_changed_cb)
         self.remove_button.connect("clicked", self.remove_clicked_cb, treeview)
         self.add_button.connect("clicked", self.add_clicked_cb, pathmodel)
 
-gobject.type_register( PathChooser )
+GObject.type_register( PathChooser )
 
-class ProjectOptionsDialog(gtk.Dialog):
-    def __init__(self, parent):
-        gtk.Dialog.__init__(self, _('Project options'), parent,
-                            gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                            ( gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE ))
+class ProjectOptionsDialog(Gtk.Dialog):
+    def __init__(self, parent, **kwargs):
+        super().__init__(
+            title=_('Project options'),
+            transient_for=parent,
+            modal=True, destroy_with_parent=True,
+            **kwargs
+        )
+        self.add_button("_Close", Gtk.ResponseType.CLOSE)
 
         self.project = parent.project
 
-        # GUI Spacing
-        self.set_has_separator(False)
-        #self.set_border_width(12)
+        vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, margin=12, spacing=6)
+        self.vbox.pack_start(vbox, False, False, 0)
 
-        alignment = gtk.Alignment( 0, 0, 1, 1 )
-        alignment.set_padding( 12, 12, 12, 12 )
-        self.vbox.pack_start(alignment)
+        label = Gtk.Label(label=_("<b>General</b>"), use_markup=True, xalign=0)
+        vbox.pack_start(label, False, True, 0)
 
-        vbox = gtk.VBox()
-        alignment.add(vbox)
-        vbox.set_spacing(6)
-
-        label = gtk.Label(_("<b>General</b>"))
-        label.set_use_markup(True)
-        label.set_alignment(0, 0.5)
-        vbox.pack_start(label, False, True)
-
-        alignment = gtk.Alignment( 0, 0, 0, 0 )
-        alignment.set_padding( 6, 6, 12, 0 )
-        vbox.pack_start(alignment, False, True)
-
-        generalvbox = gtk.VBox()
-        alignment.add(generalvbox)
-        generalvbox.set_spacing(6)
-
-        checkbutton = gtk.CheckButton(_("Preserve PCB elements not in the schematic"))
-        checkbutton.set_active(parent.project.preserve_unfound)
-        generalvbox.pack_start(checkbutton, False, True)
+        generalvbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, margin_top=6, margin_bottom=6, margin_start=12)
+        vbox.pack_start(generalvbox, False, True, 0)
+        
+        checkbutton = Gtk.CheckButton(label=_("Preserve PCB elements not in the schematic"), active=parent.project.preserve_unfound)
+        generalvbox.pack_start(checkbutton, False, True, 0)
         checkbutton.connect('toggled', self.preserve_pcb_checkbox_toggled)
 
         radiobutton = None
         for choice, label in [(Gsch2PCBProject.PREFER_M4_FOOTPRINTS, _("Prefer M4 footprints to file footprints")),
                               (Gsch2PCBProject.PREFER_FILE_FOOTPRINTS, _("Prefer file footprints to M4 footprints")),
                               (Gsch2PCBProject.USE_ONLY_FILE_FOOTPRINTS, _("Only use file footprints"))]:
-            radiobutton = gtk.RadioButton(radiobutton, label)
-            radiobutton.set_active(parent.project.footprint_type_choice == choice)
-            generalvbox.pack_start(radiobutton, False, True)
+            radiobutton = Gtk.RadioButton(label=label, group=radiobutton, active=parent.project.footprint_type_choice == choice)
+            generalvbox.pack_start(radiobutton, False, True, 0)
             radiobutton.connect('toggled', self.footprints_radio_toggled, choice)
 
-        label = gtk.Label(_("<b>Footprint search paths</b>"))
-        label.set_use_markup(True)
-        label.set_alignment(0, 0.5)
-        vbox.pack_start(label, False, True)
+        label = Gtk.Label(label=_("<b>Footprint search paths</b>"), use_markup=True, xalign=0)
+        vbox.pack_start(label, False, True, 0)
 
-        alignment = gtk.Alignment( 0, 0, 1, 1 )
-        alignment.set_padding( 6, 6, 12, 0 )
-        vbox.pack_start(alignment, True, True)
+        self.path_chooser = PathChooser(parent.project.elements_dir, margin_top=6, margin_bottom=6, margin_start=12)
+        vbox.pack_start(self.path_chooser, True, True, 0)
 
-        pathchooser = PathChooser(parent.project.elements_dir)
-        alignment.add (pathchooser)
-        self.path_chooser = pathchooser
+        advancedoptions = Gtk.Expander(label_widget=Gtk.Label(label=_("Advanced options"), margin=6))
+        vbox.pack_start(advancedoptions, False, True, 0)
 
-        advancedoptions = gtk.Expander(_("Advanced options"))
-        advancedoptions.set_spacing(6)
-        label = advancedoptions.get_label_widget()
-        label.set_padding(6,6)
-        vbox.pack_start(advancedoptions, False, True)
-
-        advancedvbox = gtk.VBox()
+        advancedvbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6)
         advancedoptions.add(advancedvbox)
 
-        # GUI Spacing
-        advancedvbox.set_spacing(6)
+        label = Gtk.Label(label=_("<b>M4 Options</b>"), use_markup=True, xalign=0)
+        advancedvbox.pack_start(label, False, False, 0)
 
-        label = gtk.Label(_("<b>M4 Options</b>"))
-        label.set_use_markup(True)
-        label.set_alignment(0, 0.5)
-        advancedvbox.pack_start(label)
+        grid = Gtk.Grid(margin_start=12, column_spacing=6, row_spacing=6)
+        advancedvbox.pack_start(grid, False, False, 0)
 
-        alignment = gtk.Alignment( 0, 0, 1, 0 )
-        alignment.set_padding( 0, 0, 12, 0 )
-        advancedvbox.pack_start(alignment)
-
-        table = gtk.Table(3, 2)
-        alignment.add( table )
-
-        # GUI Spacing
-        table.set_row_spacings(6)
-        table.set_col_spacings(6)
-
-        self.m4_command_entry = gtk.Entry()
-        self.m4_pcbpath_entry = gtk.Entry()
-        self.m4_extra_file_entry = gtk.Entry()
+        self.m4_command_entry = Gtk.Entry()
+        self.m4_pcbpath_entry = Gtk.Entry()
+        self.m4_extra_file_entry = Gtk.Entry()
 
         for i, (entry, label_text, entry_contents) in enumerate([
                 (self.m4_command_entry,    _("M4 command :"),    parent.project.m4_command),
                 (self.m4_pcbpath_entry,    _("M4 PCB path :"),   parent.project.m4_pcbdir),
                 (self.m4_extra_file_entry, _("M4 extra file :"), parent.project.m4_file)]):
-            label = gtk.Label(label_text)
-            label.set_alignment(0, 0.5)
-            table.attach (label, 0, 1, i, i + 1, gtk.FILL)
+            label = Gtk.Label(label=label_text, xalign=0)
+            grid.attach (label, 0, i, 1, 1)
 
             if entry_contents:
                 entry.set_text(entry_contents)
 
-            table.attach (entry, 1, 2, i, i + 1)
+            grid.attach (entry, 1, i, 1, 1)
 
-        label = gtk.Label(_("<b>Extra gnetlist arguments</b>"))
-        label.set_use_markup(True)
-        label.set_alignment(0, 0.5)
-        advancedvbox.pack_start(label, False, True)
+        label = Gtk.Label(label=_("<b>Extra gnetlist arguments</b>"), use_markup=True, xalign=0)
+        advancedvbox.pack_start(label, False, True, 0)
 
-        self.gnetlist_arg_entry = gtk.Entry()
+        self.gnetlist_arg_entry = Gtk.Entry()
         if parent.project.gnetlist_arg:
             self.gnetlist_arg_entry.set_text(parent.project.gnetlist_arg)
 
-        advancedvbox.pack_start(self.gnetlist_arg_entry, False, True)
+        advancedvbox.pack_start(self.gnetlist_arg_entry, False, True, 0)
 
     def preserve_pcb_checkbox_toggled(self, widget, data=None):
         self.project.preserve_unfound = widget.get_active()
@@ -1205,4 +1033,4 @@ class ProjectOptionsDialog(gtk.Dialog):
         self.project.footprint_type_choice = data
         # self.parent.project.set_dirty(True)
 
-gobject.type_register( ProjectOptionsDialog )
+GObject.type_register( ProjectOptionsDialog )

@@ -18,37 +18,27 @@
 # with this program; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-# TODO: Is this needed? What version of python do we depend on?
-from __future__ import generators
+from gi.repository import GObject
+import subprocess, shutil, re, os, sys, time, stat
+import dbus
 
-import commands, shutil, re, gobject, os, sys, time
-import dbus, dbus.glib, dbus.service
-
-import config
+import config, funcs
 
 # i18n
 import gettext
 t = gettext.translation(config.PACKAGE, config.localedir, fallback=True)
-_ = t.ugettext
+_ = t.gettext
 
-# xgsch2pcb-specific modules
-from stat import *
-from subprocess import *
-from funcs import *
-
-# Define PCB action return codes
-PCB_RC_OK      = 0
-
-class PCBManager( gobject.GObject ):
+class PCBManager( GObject.GObject ):
 
     __gsignals__ = { "update-complete" :
                       ( 0,                        # No special flags
-                        gobject.TYPE_NONE,        # Return type
-                        (gobject.TYPE_BOOLEAN, )  # Pass a bool to signal
+                        GObject.TYPE_NONE,        # Return type
+                        (GObject.TYPE_BOOLEAN, )  # Pass a bool to signal
                        ) }
     
     def __init__(self, project):
-        gobject.GObject.__init__(self)
+        super().__init__()
 
         self.project = project
        
@@ -63,8 +53,8 @@ class PCBManager( gobject.GObject ):
         
         self.cofunc = None
         
-        self.toolpath = find_tool_path( 'pcb' )
-        self.gsch2pcbpath = find_tool_path( 'gsch2pcb' )
+        self.toolpath = funcs.find_tool_path( 'pcb' )
+        self.gsch2pcbpath = funcs.find_tool_path( 'gsch2pcb' )
 
         if not (self.toolpath and self.gsch2pcbpath):
             exception_txt = ''
@@ -74,7 +64,7 @@ class PCBManager( gobject.GObject ):
             if not self.gsch2pcbpath:
                 exception_txt = exception_txt + \
                     _("\nCouldn't find 'gsch2pcb' executable")
-            raise Exception, exception_txt
+            raise Exception(exception_txt)
 
         # Setup the D-Bus connection
         # TODO: Graceful error handling
@@ -93,7 +83,7 @@ class PCBManager( gobject.GObject ):
             # TODO: Is there some clever way to bring PCB to front?
             # Possibly send it an action which does a window-manager request?
             return
-        Popen([self.toolpath, os.path.abspath( self.output_name + ".pcb" )])
+        subprocess.Popen([self.toolpath, os.path.abspath( self.output_name + ".pcb" )])
         while not self.is_layout_open():
             time.sleep( 0.1 )
         assert self.is_layout_open()
@@ -119,7 +109,7 @@ class PCBManager( gobject.GObject ):
             try:
                 filename = pcb_iface.GetFilename()
             except:
-                print 'is_layout_open(): DEBUG Exception calling pcb_iface.GetFilename()'
+                print('is_layout_open(): DEBUG Exception calling pcb_iface.GetFilename()')
                 ohdear = True
 
             if not ohdear:
@@ -157,11 +147,11 @@ class PCBManager( gobject.GObject ):
             else:
                 return False
         
-        layout_mtime = os.stat(self.output_name + ".pcb")[ST_MTIME]
+        layout_mtime = os.stat(self.output_name + ".pcb")[stat.ST_MTIME]
 
         schematic_mtime = layout_mtime
         for page in schematics:
-            mtime = os.stat(page)[ST_MTIME]
+            mtime = os.stat(page)[stat.ST_MTIME]
             schematic_mtime = max(mtime, schematic_mtime)
 
         return (layout_mtime < schematic_mtime)
@@ -211,7 +201,7 @@ class PCBManager( gobject.GObject ):
         if not self.is_layout_open():
             self.open_layout()
 
-        print _("********START UPDATING********")
+        print(_("********START UPDATING********"))
         
         # TODO: TELL PCB TO IGNORE USER ACTIONS
 
@@ -233,26 +223,26 @@ class PCBManager( gobject.GObject ):
         self.project.save( self.output_name + ".tmp.gsch2pcb" )
         
         # Run gsch2pcb
-        # TODO: Handle via Popen like other tools?
-        gsch2pcb_cmd = self.gsch2pcbpath + ' -q "' + self.output_name + '.tmp.gsch2pcb"'
-        gsch2pcb_output = commands.getstatusoutput(gsch2pcb_cmd)
-        lines = gsch2pcb_output[1].splitlines()
+        gsch2pcb_cmd = [self.gsch2pcbpath, '-q', self.output_name + '.tmp.gsch2pcb']
+        gsch2pcb_output = subprocess.Popen(gsch2pcb_cmd, stdout=subprocess.PIPE)
+        gsch2pcb_stdout, gsch2pcb_stderr = gsch2pcb_output.communicate()
+        lines = gsch2pcb_stdout.splitlines()
         unfound = []
         gsch2pcb_backup = None
         for line in lines:
-            print "<gsch2pcb>:", line
+            print("<gsch2pcb>:", line)
 
-            search = ' is backed up as '
+            search = b' is backed up as '
             found_idx = line.find( search )
             if found_idx >= 0:
                 # The last character is a ".", so don't return that.
                 gsch2pcb_backup = line[ found_idx + len(search) : len(line) -1 ]
 
-            search = ': can\'t find PCB element for footprint '
+            search = b': can\'t find PCB element for footprint '
             found_idx = line.find( search )
             if found_idx >= 0:
                 refdes = line[ 0 : found_idx ]
-                end_fp_idx = line.find( " (value=", found_idx )
+                end_fp_idx = line.find( b" (value=", found_idx )
                 footprint = line[ found_idx + len( search ) : end_fp_idx ]
                 unfound.append( [ refdes, footprint ] )
 
@@ -311,8 +301,8 @@ class PCBManager( gobject.GObject ):
         # Move original layout backup back in place, delete intermediate files
         cleanup_files()
 
-        print _("********DONE UPDATING********")
+        print(_("********DONE UPDATING********"))
         return unfound
 
-gobject.type_register( PCBManager )
+GObject.type_register( PCBManager )
 
