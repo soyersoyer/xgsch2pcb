@@ -27,8 +27,8 @@ Requirements
 
  * python >= 3.6
  * gtk3 >= 3.14
- * python-gobject
- * python-dbus
+ * python3-gobject
+ * python3-dbus
  * A recent version of the gEDA suite
  * A version of ``pcb`` compiled with D-Bus support.
 
