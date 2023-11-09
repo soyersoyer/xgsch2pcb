@@ -186,7 +186,7 @@ class NewProjectAssistant(Gtk.Assistant):
         options.pack_start(self.description, False, False, 0)
 
         self.append_page(page)
-        self.set_page_title(page, _("Create new project"))
+        self.set_page_title(page, _("Template"))
 
         self.set_page_type(page, Gtk.AssistantPageType.CONTENT)
         self.set_page_complete(page, True)
@@ -234,7 +234,7 @@ class NewProjectAssistant(Gtk.Assistant):
         options.pack_start(grid, False, False, 0)
 
         self.append_page(page)
-        self.set_page_title(page, _("Create new project"))
+        self.set_page_title(page, _("Filename"))
         self.set_page_type(page, Gtk.AssistantPageType.CONTENT)
         self.set_page_complete(page, False)
         self.filename_page = page
@@ -287,7 +287,7 @@ class NewProjectAssistant(Gtk.Assistant):
         self.confirm_overwrite.connect( 'toggled', confirm_overwrite_toggled_cb )
 
         self.append_page(page)
-        self.set_page_title(page, _("Create new project"))
+        self.set_page_title(page, _("Summary"))
         self.set_page_type(page, Gtk.AssistantPageType.CONFIRM)
         self.summary_page = page
 
