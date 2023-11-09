@@ -26,7 +26,6 @@ python_PYTHON = lib/xgsch2pcb/pcbmanager.py \
  lib/xgsch2pcb/gsch2pcbproject.py \
  lib/xgsch2pcb/gui.py \
  lib/xgsch2pcb/new_project_gui.py \
- lib/xgsch2pcb/assistant.py \
  lib/xgsch2pcb/templates.py \
  lib/xgsch2pcb/funcs.py
 
