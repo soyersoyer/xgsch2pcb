@@ -93,7 +93,7 @@ class MonitorWindow(Gtk.Window):
         selection.connect('changed', self.event_pagelist_selection_changed)
         
         # Horizontal box containing 'add page' and 'remove page' buttons
-        addremovebox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, homogeneous=True)
+        addremovebox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, homogeneous=True, spacing=3)
         vbox.pack_start(addremovebox, False, True, 0)
 
         self.addpagebutton = Gtk.Button(label="_Add", use_underline=True)
