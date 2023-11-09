@@ -27,9 +27,9 @@ AC_INIT([geda-xgsch2pcb], [0.1.3], BUG-REPORT-ADDRESS)
 AM_INIT_AUTOMAKE([foreign])
 
 
-PYTHON_WANTVERSION=2.4
-PYTHON_WANTMODULES="commands gettext os os.path re shutil stat subprocess dbus dbus.glib dbus.service string"
-GTK_WANTVERSION=2.8
+PYTHON_WANTVERSION=3.6
+PYTHON_WANTMODULES="gettext os os.path re shutil stat subprocess dbus string"
+GTK_WANTVERSION=3.14
 
 
 # Checks for programs.
@@ -110,61 +110,25 @@ AC_SUBST(XDGDATADIR)
 ##########################################################################
 
 ##########################################################################
-# Look for PyGTK
+# Look for Pygobject Gtk 3.0
 #
 
-AC_PYTHON_MODULE(pygtk, t)
+AC_PYTHON_MODULE(pygobject, t)
 
-AC_MSG_CHECKING(for pygtk 2.0)
+AC_MSG_CHECKING(for pygobject gtk 3.0)
 cat > conftest.py <<[EOF
-import pygtk
-pygtk.require("2.0")
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 EOF]
 
 if $PYTHON conftest.py > /dev/null 2>&1; then
     AC_MSG_RESULT(yes)
 else
     AC_MSG_RESULT(no)
-    AC_MSG_ERROR([pygtk 2.0 is required])
+    AC_MSG_ERROR([pygobject gtk 3.0 is required])
 fi
 
-for module in gobject gtk gtk.gdk; do
-    AC_PYTHON_MODULE($module, t)
-done
-
-AC_ARG_ENABLE([gtk-version-check],
-    AS_HELP_STRING([--disable-gtk-version-check], [Disable GTK+ version check, use it only for non-X environment]))
-
-AS_IF([test "x$enable_gtk_version_check" != "xno"], [
-
-AC_MSG_CHECKING(for gtk+ >= $GTK_WANTVERSION)
-cat > conftest.py <<[EOF
-import sys
-try:
-    import gtk
-    ver = gtk.gtk_version
-    sys.stdout.write(".".join(map(str, ver)))
-    if len(sys.argv) > 1:
-        wantver = sys.argv[1].split(".")
-        wantver = map(int, wantver)
-        for i in range(len(wantver)):
-            if i > len(ver):
-                break
-            if wantver[i] > ver[i]:
-                sys.exit(1)
-except:
-    sys.exit(1)
-sys.exit(0)
-EOF]
-
-GTK_VERSION=`$PYTHON conftest.py $GTK_WANTVERSION 2> /dev/null`
-haveversion=$?
-AC_MSG_RESULT($GTK_VERSION)
-if test $haveversion -ne 0; then
-  AC_MSG_ERROR([GTK+ >= $GTK_WANTVERSION is required])
-fi
-
-])
 
 #
 #
