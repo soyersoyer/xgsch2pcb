@@ -15,3 +15,6 @@ intltool-update
 intltool-update.in
 install-sh
 missing
+__pycache__
+/xgsch2pcb
+configure~
