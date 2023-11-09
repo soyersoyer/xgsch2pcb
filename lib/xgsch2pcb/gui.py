@@ -174,13 +174,6 @@ class MonitorWindow(Gtk.Window):
         box.pack_start(toolbar, False, True, 0)
         self.toolbar_buttons = {}
 
-        button = Gtk.ToolButton(icon_name="application-exit", tooltip_text=_("Quit"))
-        toolbar.insert(button, -1)
-        button.connect("clicked", self.event_quit_button_clicked)
-        self.toolbar_buttons['quit'] = button
-
-        toolbar.insert(Gtk.SeparatorToolItem(), -1)
-
         button = Gtk.ToolButton(icon_name="document-new", tooltip_text=_("New project"))
         toolbar.insert(button, -1)
         button.connect("clicked", self.event_new_button_clicked)
@@ -493,9 +486,6 @@ class MonitorWindow(Gtk.Window):
 
     def event_close_button_clicked( self, button ):
         self.close_project( _("closing the project") )
-
-    def event_quit_button_clicked(self, button):
-        self.handle_quit()
 
     def event_options_button_clicked(self, button):
         options_dialog = ProjectOptionsDialog(parent=self, name=_("Options dialog"))
